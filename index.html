@@ -3,490 +3,407 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RETROBALL</title>
+<title>RETROBALL Derby</title>
 <style>
-:root {
-  --ink: #0a1f16; --cream: #f8f0d0; --gold: #f4c430; --green: #1a6b42;
-  --dark-green: #0d3d26; --red: #d44a46; --blue: #2a5aa0;
-}
 * { box-sizing: border-box; image-rendering: pixelated; }
-body { margin: 0; min-height: 100vh; background: #06140f; color: var(--ink); font-family: "Courier New", monospace; }
-button { font-family: inherit; cursor: pointer; border: none; }
-.app { max-width: 1000px; margin: 0 auto; min-height: 100vh; background: var(--cream); border-left: 8px solid #1a2c22; border-right: 8px solid #1a2c22; }
-header { background: var(--green); color: white; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 5px solid var(--gold); }
-.brand { display: flex; align-items: center; gap: 10px; }
-.brand-mark { width: 46px; height: 46px; background: var(--cream); color: var(--green); border: 3px solid white; display: grid; place-items: center; font-size: 24px; font-weight: bold; }
-h1 { margin: 0; font-size: 22px; letter-spacing: 1px; }
-.coins { background: var(--dark-green); border: 3px solid white; padding: 6px 14px; font-size: 18px; font-weight: bold; }
-nav { display: flex; background: var(--ink); padding: 4px; gap: 3px; flex-wrap: wrap; }
-nav button { flex: 1; min-width: 80px; padding: 10px 6px; background: #2a4a38; color: var(--cream); text-transform: uppercase; font-weight: bold; font-size: 12px; }
-nav button.active { background: var(--gold); color: var(--ink); }
-main { padding: 12px; }
-.view { display: none; }
-.view.active { display: block; }
-.panel { border: 4px solid var(--ink); background: #fffdf5; box-shadow: 5px 5px 0 #c8bc94; margin-bottom: 12px; }
-.panel-title { background: var(--ink); color: white; padding: 6px 10px; font-weight: bold; text-transform: uppercase; font-size: 13px; }
-.hub-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; padding: 12px; }
-.stat-box { border: 3px solid var(--ink); background: #f5edd8; padding: 8px; text-align: center; }
-.stat-box b { display: block; font-size: 20px; color: var(--green); }
-.play-big { display: block; width: 100%; margin: 12px auto; padding: 18px; background: var(--gold); color: var(--ink); font-size: 20px; font-weight: bold; border: 4px solid var(--ink); }
-.roster-grid, .fa-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; padding: 10px; }
-.player-card { border: 3px solid var(--ink); padding: 6px; text-align: center; background: #f5edd8; cursor: pointer; font-size: 12px; }
-.player-card.black { background: #333; color: #eee; }
-.player-card.bronze { background: #e6c7a0; }
-.player-card.silver { background: #e8e8e8; }
-.player-card.gold { background: #ffe566; }
-.player-card.diamond { background: #81d4fa; color: #003; }
-.portrait { font-size: 36px; height: 44px; display: grid; place-items: center; }
-.player-name { font-weight: bold; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.rating { width: 34px; height: 34px; border-radius: 50%; background: var(--gold); border: 2px solid var(--ink); margin: 4px auto; display: grid; place-items: center; font-weight: bold; }
-.lineup-slots { display: grid; gap: 6px; padding: 8px; }
-.line-slot { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border: 2px solid #aaa; background: #fff; }
-.line-slot.starter { background: #e8f5e9; }
-.line-slot.pitcher { background: #fff3e0; }
-.quick-actions { padding: 8px; display: flex; gap: 8px; }
-.quick-actions button { padding: 8px 12px; background: var(--green); color: white; border: 2px solid #000; font-weight: bold; }
-.game-layout { display: grid; grid-template-columns: 1fr 280px; gap: 12px; }
-@media (max-width: 800px) { .game-layout { grid-template-columns: 1fr; } }
-.field-wrap { position: relative; background: #2d5a3a; border: 4px solid var(--ink); height: 420px; cursor: pointer; }
-canvas#gameCanvas { width: 100%; height: 100%; display: block; }
-.scoreboard { display: grid; grid-template-columns: repeat(5, 1fr); background: var(--ink); color: white; text-align: center; font-size: 12px; }
-.scoreboard div { padding: 6px 2px; }
-.scoreboard b { display: block; font-size: 16px; }
-.batter-panel, .pitcher-panel { background: #1a2c22; color: white; padding: 8px; border: 3px solid var(--ink); margin-top: 8px; font-size: 12px; }
-.bar { height: 8px; background: #333; margin: 2px 0 6px; }
-.bar-fill { height: 100%; background: var(--gold); }
-.game-controls { padding: 8px; }
-.game-controls button { width: 100%; margin: 4px 0; padding: 12px; background: var(--gold); color: var(--ink); font-weight: bold; font-size: 15px; border: 3px solid var(--ink); }
-#gameLog { height: 130px; overflow-y: auto; border: 3px solid var(--ink); background: #fffdf5; padding: 6px; font-size: 12px; margin-top: 6px; }
-.tap-hint { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 8px 14px; font-size: 14px; border: 2px solid var(--gold); pointer-events: none; font-weight: bold; }
-.toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%) translateY(120px); background: var(--ink); color: white; border: 3px solid var(--gold); padding: 10px 18px; z-index: 200; transition: transform 0.2s; }
-.toast.show { transform: translateX(-50%) translateY(0); }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #06140f;
+  color: #f8f0d0;
+  font-family: "Courier New", monospace;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+h1 { margin: 8px 0; font-size: 28px; letter-spacing: 3px; color: #f4c430; }
+.scoreboard {
+  display: flex;
+  gap: 20px;
+  background: #0d3d26;
+  border: 4px solid #f4c430;
+  padding: 10px 20px;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+.scoreboard b { color: #f4c430; font-size: 22px; }
+.field-wrap {
+  position: relative;
+  border: 6px solid #1a2c22;
+  background: #2d5a3a;
+  cursor: pointer;
+  box-shadow: 0 0 0 4px #f4c430;
+}
+canvas { display: block; }
+.tap-hint {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.8);
+  color: white;
+  padding: 8px 16px;
+  font-size: 16px;
+  font-weight: bold;
+  border: 3px solid #f4c430;
+  pointer-events: none;
+}
+.info {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 14px;
+  max-width: 640px;
+}
+.pitch-legend {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+.legend-item { display: flex; align-items: center; gap: 4px; }
+.swatch { width: 16px; height: 16px; border: 2px solid #fff; }
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background: #f4c430;
+  color: #0a1f16;
+  font-weight: bold;
+  font-size: 16px;
+  border: 3px solid #0a1f16;
+  cursor: pointer;
+  font-family: inherit;
+}
+button:active { transform: translateY(2px); }
 </style>
 </head>
 <body>
-<div class="app">
-  <header>
-    <div class="brand"><div class="brand-mark">R</div><h1>RETROBALL</h1></div>
-    <div class="coins">$ <span id="coins">2500</span></div>
-  </header>
-  <nav>
-    <button class="active" data-view="hub">Hub</button>
-    <button data-view="roster">Roster</button>
-    <button data-view="lineup">Lineup</button>
-    <button data-view="freeagents">Free Agents</button>
-    <button data-view="season">Season</button>
-    <button data-view="game">Play</button>
-  </nav>
-  <main>
-    <section id="hub" class="view active">
-      <div class="panel">
-        <div class="panel-title">Franchise Hub</div>
-        <div class="hub-stats">
-          <div class="stat-box">Record<br><b id="record">0-0</b></div>
-          <div class="stat-box">Team OVR<br><b id="hubOvr">--</b></div>
-          <div class="stat-box">Next<br><b id="nextOpp">TBD</b></div>
-        </div>
-        <button class="play-big" onclick="startNextGame()">PLAY BALL</button>
-      </div>
-    </section>
-    <section id="roster" class="view">
-      <div class="panel">
-        <div class="panel-title">Roster <span id="rosterCount"></span></div>
-        <div style="padding:8px;font-size:12px;">Click a player, then click a slot in Lineup.</div>
-        <div class="roster-grid" id="players"></div>
-      </div>
-    </section>
-    <section id="lineup" class="view">
-      <div class="panel">
-        <div class="panel-title">Lineup (OVR: <span id="teamOvr">--</span>)</div>
-        <div class="quick-actions">
-          <button onclick="autoFillBest()">Auto Best</button>
-          <button onclick="clearLineup()">Clear</button>
-        </div>
-        <div class="lineup-slots" id="lineupSlots"></div>
-      </div>
-    </section>
-    <section id="freeagents" class="view">
-      <div class="panel">
-        <div class="panel-title">Free Agents</div>
-        <div class="fa-grid" id="faGrid"></div>
-        <div style="padding:8px;"><button onclick="refreshFreeAgents()" style="padding:8px;background:var(--green);color:white;">Refresh ($150)</button></div>
-      </div>
-    </section>
-    <section id="season" class="view">
-      <div class="panel">
-        <div class="panel-title">Season</div>
-        <div id="scheduleList" style="padding:8px;font-size:13px;"></div>
-      </div>
-    </section>
-    <section id="game" class="view">
-      <div class="game-layout">
-        <div>
-          <div class="scoreboard">
-            <div>INN<br><b id="inning">1</b></div>
-            <div>OUT<br><b id="outs">0</b></div>
-            <div>B-S<br><b id="count">0-0</b></div>
-            <div>YOU<br><b id="runs">0</b></div>
-            <div>OPP<br><b id="oppRuns">0</b></div>
-          </div>
-          <div class="field-wrap">
-            <canvas id="gameCanvas" width="600" height="420"></canvas>
-            <div class="tap-hint" id="tapHint">TAP TO PITCH</div>
-          </div>
-        </div>
-        <div class="panel">
-          <div class="panel-title">At Bat</div>
-          <div class="batter-panel" id="batterPanel">Ready</div>
-          <div class="pitcher-panel" id="pitcherPanel">Pitcher</div>
-          <div class="game-controls">
-            <button id="advanceBtn">ADVANCE RUNNERS</button>
-            <button id="newGameBtn" style="background:#3266a8;color:white;">NEW GAME</button>
-          </div>
-          <div id="gameLog">Tap the field to pitch, then tap again to swing.</div>
-        </div>
-      </div>
-    </section>
-  </main>
+<h1>RETROBALL DERBY</h1>
+<div class="scoreboard">
+  <div>HOME RUNS<br><b id="hrs">0</b></div>
+  <div>PITCHES<br><b id="pitches">0</b></div>
+  <div>BEST<br><b id="best">0</b></div>
+  <div>STREAK<br><b id="streak">0</b></div>
 </div>
-<div class="toast" id="toast"></div>
-<script>
-const NAMES = ['Ace Walker','Billy Bunts','Carlos Vega','Duke Davis','Eddie Flash','Frank Flint','Gus Green','Harry Horn','Ivy Jones','Jack Slugger','Leo Long','Manny Mound','Nate Nitro','Otto Oak','Pete Power','Ray Rocket','Sam Slam','Tex Turner','Vic Velocity','Will Wright'];
-const EMOJIS = ['🏃','🧢','🧔','👱','🧑','👨‍🦰'];
-const POS = ['P','C','1B','2B','3B','SS','LF','CF','RF'];
-const OPPS = ['Aces','Bombers','Cyclones','Dragons','Eagles','Falcons','Giants','Hawks'];
-const TIER_BASE = { black: 40, bronze: 50, silver: 62, gold: 74, diamond: 86 };
+<div class="field-wrap" id="fieldWrap">
+  <canvas id="c" width="640" height="420"></canvas>
+  <div class="tap-hint" id="hint">TAP TO PITCH</div>
+</div>
+<div class="info">
+  Tap the field to pitch, then tap again to swing.<br>
+  Time it right and crush it!
+</div>
+<div class="pitch-legend">
+  <div class="legend-item"><div class="swatch" style="background:#eee;"></div> White: Normal</div>
+  <div class="legend-item"><div class="swatch" style="background:#e33;"></div> Red: SUPER FAST</div>
+  <div class="legend-item"><div class="swatch" style="background:#39f;"></div> Blue: Loop ball</div>
+  <div class="legend-item"><div class="swatch" style="background:#fc0;"></div> Yellow: Slider</div>
+  <div class="legend-item"><div class="swatch" style="background:linear-gradient(90deg,#f33,#f93,#ff3,#3f3,#39f,#93f);"></div> Rainbow: ANYTHING</div>
+</div>
+<button onclick="resetGame()">RESET</button>
 
-let state = { coins: 2500, roster: [], lineup: Array(9).fill(null), pitcherIdx: null, season: { wins:0, losses:0, schedule:[] }, freeAgents: [] };
-let gameState = null;
-let anim = { arm: 0, swing: 0, ball: null, hit: null, phase: 'idle' };
-let canvas, ctx;
-let selectedIdx = null;
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const hint = document.getElementById('hint');
+
+let hrs = 0, pitches = 0, best = parseInt(localStorage.getItem('retroball-best')||0), streak = 0;
+let phase = 'idle'; // idle | pitching | resolving
+let pitchType = 'white';
+let anim = { arm: 0, swing: 0, ball: null, hit: null };
 let animId = null;
 
-function load() {
-  try { const s = localStorage.getItem('retroball'); if (s) Object.assign(state, JSON.parse(s)); } catch(e){}
-  if (!state.roster || state.roster.length === 0) {
-    state.roster = [];
-    for (let i = 0; i < 12; i++) state.roster.push(makePlayer(i < 3 ? 'silver' : i < 6 ? 'bronze' : 'black'));
-    autoFillBest();
-    state.season.schedule = OPPS.slice(0, 10).map(o => ({ opp: o, played: false, result: null }));
-    refreshFreeAgents(true);
+const PITCHES = {
+  white:  { name: 'Normal',     color: '#eeeeee', speed: 1.0, curve: 0,   loop: 0 },
+  red:    { name: 'SUPER FAST', color: '#ee3333', speed: 1.85, curve: 0,   loop: 0 },
+  blue:   { name: 'Loop ball',  color: '#3399ff', speed: 0.75, curve: 0,   loop: 1 },
+  yellow: { name: 'Slider',     color: '#ffcc00', speed: 1.1,  curve: 1.4, loop: 0 },
+  rainbow:{ name: 'ANYTHING',   color: 'rainbow', speed: 1.3,  curve: 0.8, loop: 0.5 }
+};
+
+function pickPitch() {
+  const r = Math.random();
+  if (r < 0.35) return 'white';
+  if (r < 0.55) return 'red';
+  if (r < 0.75) return 'blue';
+  if (r < 0.90) return 'yellow';
+  return 'rainbow';
+}
+
+function updateScore() {
+  document.getElementById('hrs').textContent = hrs;
+  document.getElementById('pitches').textContent = pitches;
+  document.getElementById('best').textContent = best;
+  document.getElementById('streak').textContent = streak;
+  if (hrs > best) {
+    best = hrs;
+    localStorage.setItem('retroball-best', best);
   }
-  save();
 }
-function save() { localStorage.setItem('retroball', JSON.stringify(state)); }
-function makePlayer(tier) {
-  if (!tier) { const r = Math.random(); tier = r < 0.04 ? 'diamond' : r < 0.12 ? 'gold' : r < 0.32 ? 'silver' : r < 0.6 ? 'bronze' : 'black'; }
-  const base = TIER_BASE[tier];
-  const rating = Math.min(99, base + Math.floor(Math.random()*14));
-  return { id: Math.random(), name: NAMES[Math.floor(Math.random()*NAMES.length)], tier, rating, pos: POS[Math.floor(Math.random()*POS.length)], emoji: EMOJIS[Math.floor(Math.random()*EMOJIS.length)], power: Math.min(99, rating-Math.floor(Math.random()*10)), contact: Math.min(99, rating-Math.floor(Math.random()*8)), speed: Math.min(99, rating-Math.floor(Math.random()*12)), xp: 0, level: 1 };
-}
-function refreshFreeAgents(free) {
-  if (!free && state.coins < 150) return toast('Need $150');
-  if (!free) state.coins -= 150;
-  state.freeAgents = [];
-  for (let i = 0; i < 5; i++) state.freeAgents.push(makePlayer());
-  renderAll(); save();
-}
-function autoFillBest() {
-  const sorted = state.roster.map((p,i)=>({p,i})).sort((a,b)=>b.p.rating-a.p.rating);
-  state.lineup = sorted.slice(0,9).map(x=>x.i);
-  while (state.lineup.length < 9) state.lineup.push(null);
-  const pitchers = state.roster.map((p,i)=>({p,i})).filter(x=>x.p.pos==='P');
-  state.pitcherIdx = pitchers.length ? pitchers.sort((a,b)=>b.p.rating-a.p.rating)[0].i : sorted[0]?.i ?? 0;
-  renderAll(); save();
-}
-function clearLineup() { state.lineup = Array(9).fill(null); state.pitcherIdx = null; renderAll(); save(); }
-function selectForLineup(i) { selectedIdx = i; toast('Selected ' + state.roster[i].name); }
-function assignToSlot(slot) {
-  if (selectedIdx == null) return toast('Select a player first');
-  state.lineup = state.lineup.map(x => x === selectedIdx ? null : x);
-  state.lineup[slot] = selectedIdx;
-  selectedIdx = null; renderAll(); save();
-}
-function assignPitcher() {
-  if (selectedIdx == null) return toast('Select a player first');
-  state.pitcherIdx = selectedIdx; selectedIdx = null; renderAll(); save();
-}
-function sellPlayer(i) {
-  if (!confirm('Cut ' + state.roster[i].name + '?')) return;
-  state.coins += Math.floor(state.roster[i].rating);
-  state.lineup = state.lineup.map(x => x === i ? null : (x > i ? x-1 : x));
-  if (state.pitcherIdx === i) state.pitcherIdx = null; else if (state.pitcherIdx > i) state.pitcherIdx--;
-  state.roster.splice(i,1); renderAll(); save();
-}
-function signFreeAgent(i) {
-  const p = state.freeAgents[i];
-  const cost = Math.floor(p.rating * 3);
-  if (state.coins < cost) return toast('Not enough coins');
-  state.coins -= cost;
-  state.roster.push(p);
-  state.freeAgents.splice(i,1);
-  renderAll(); save(); toast('Signed ' + p.name);
-}
-function renderAll() {
-  document.getElementById('coins').textContent = state.coins;
-  const starters = state.lineup.filter(i=>i!=null).map(i=>state.roster[i]).filter(Boolean);
-  const ovr = starters.length ? Math.round(starters.reduce((a,p)=>a+p.rating,0)/starters.length) : 0;
-  document.getElementById('teamOvr').textContent = ovr || '--';
-  document.getElementById('hubOvr').textContent = ovr || '--';
-  document.getElementById('record').textContent = (state.season.wins||0) + '-' + (state.season.losses||0);
-  const next = (state.season.schedule||[]).find(g=>!g.played);
-  document.getElementById('nextOpp').textContent = next ? next.opp : 'Done';
-  document.getElementById('rosterCount').textContent = '(' + state.roster.length + ')';
-  document.getElementById('players').innerHTML = state.roster.map((p,i)=>`
-    <div class="player-card ${p.tier}" onclick="selectForLineup(${i})">
-      <div class="portrait">${p.emoji}</div>
-      <div class="player-name">${p.name}</div>
-      <div class="rating">${p.rating}</div>
-      <div style="font-size:10px;">${p.pos} · ${p.tier.toUpperCase()}</div>
-      <button onclick="event.stopPropagation();sellPlayer(${i})" style="margin-top:4px;padding:2px;font-size:10px;background:#c84a46;color:white;width:100%;">CUT</button>
-    </div>`).join('');
-  document.getElementById('lineupSlots').innerHTML = state.lineup.map((idx,slot)=>{
-    const p = idx!=null && state.roster[idx] ? state.roster[idx] : null;
-    return `<div class="line-slot ${p?'starter':''}" onclick="assignToSlot(${slot})"><b>${POS[slot]||'BAT'+(slot+1)}</b><span>${p?p.name+' ('+p.rating+')':'Empty'}</span><span>${p?p.emoji:'—'}</span></div>`;
-  }).join('') + (()=>{
-    const p = state.pitcherIdx!=null && state.roster[state.pitcherIdx] ? state.roster[state.pitcherIdx] : null;
-    return `<div class="line-slot pitcher" onclick="assignPitcher()"><b>P</b><span>${p?p.name+' ('+p.rating+')':'Empty'}</span><span>${p?p.emoji:'—'}</span></div>`;
-  })();
-  document.getElementById('faGrid').innerHTML = (state.freeAgents||[]).map((p,i)=>`
-    <div class="player-card ${p.tier}">
-      <div class="portrait">${p.emoji}</div>
-      <div class="player-name">${p.name}</div>
-      <div class="rating">${p.rating}</div>
-      <div style="font-size:10px;">${p.pos} · ${p.tier.toUpperCase()}</div>
-      <button onclick="signFreeAgent(${i})" style="margin-top:4px;padding:4px;background:var(--green);color:white;width:100%;">SIGN $${Math.floor(p.rating*3)}</button>
-    </div>`).join('');
-  document.getElementById('scheduleList').innerHTML = (state.season.schedule||[]).map((g,i)=>`Game ${i+1}: vs ${g.opp} — ${g.played?g.result:'Upcoming'}`).join('<br>');
-}
-function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 1800); }
 
-document.querySelectorAll('nav button').forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-    document.getElementById(btn.dataset.view).classList.add('active');
-    if (btn.dataset.view === 'game') initGame();
-  };
-});
+function drawPixel(x, y, color, arm, isPitcher) {
+  // body
+  if (isPitcher && color === 'rainbow') {
+    const grd = ctx.createLinearGradient(x-8, y-20, x+8, y+10);
+    grd.addColorStop(0, '#f33');
+    grd.addColorStop(0.25, '#f93');
+    grd.addColorStop(0.5, '#ff3');
+    grd.addColorStop(0.75, '#3f3');
+    grd.addColorStop(1, '#39f');
+    ctx.fillStyle = grd;
+  } else {
+    ctx.fillStyle = isPitcher ? color : '#c84a46';
+  }
+  ctx.fillRect(x - 7, y - 18, 14, 20);
+  // head
+  ctx.fillStyle = '#f4c28a';
+  ctx.fillRect(x - 6, y - 28, 12, 11);
+  // cap
+  ctx.fillStyle = isPitcher ? '#222' : '#a33';
+  ctx.fillRect(x - 7, y - 30, 14, 4);
+  // arm / bat
+  ctx.strokeStyle = isPitcher ? '#222' : '#8b4513';
+  ctx.lineWidth = isPitcher ? 3 : 5;
+  ctx.beginPath();
+  ctx.moveTo(x + (isPitcher ? 7 : -7), y - 12);
+  const ang = isPitcher ? (arm * Math.PI * 1.2 - 1) : (-1.2 + arm * 2.6);
+  const len = isPitcher ? 16 : 20;
+  ctx.lineTo(x + Math.cos(ang) * len, y - 10 + Math.sin(ang) * 12);
+  ctx.stroke();
+}
 
-function initGame() {
-  canvas = document.getElementById('gameCanvas');
-  ctx = canvas.getContext('2d');
-  canvas.onclick = onTap;
-  if (!gameState) newGame();
-  else draw();
+function draw() {
+  const w = canvas.width, h = canvas.height;
+  // field
+  ctx.fillStyle = '#2d5a3a';
+  ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = '#266b40';
+  for (let y = 0; y < h; y += 14) ctx.fillRect(0, y, w, 7);
+  // dirt
+  ctx.fillStyle = '#8b6914';
+  ctx.beginPath();
+  ctx.moveTo(w/2, h - 10);
+  ctx.lineTo(w/2 - 140, h/2 + 40);
+  ctx.lineTo(w/2, 80);
+  ctx.lineTo(w/2 + 140, h/2 + 40);
+  ctx.closePath();
+  ctx.fill();
+  // bases
+  ctx.fillStyle = '#fff';
+  [[w/2, h-40], [w/2-110, h/2+20], [w/2, 110], [w/2+110, h/2+20]].forEach(([x,y]) => {
+    ctx.fillRect(x-8, y-8, 16, 16);
+  });
+  // mound
+  ctx.fillStyle = '#a67c52';
+  ctx.beginPath();
+  ctx.arc(w/2, h/2 + 20, 18, 0, Math.PI*2);
+  ctx.fill();
+  // home
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(w/2-30, h-80, 60, 35);
+
+  // pitcher
+  const pColor = PITCHES[pitchType].color;
+  drawPixel(w/2, h/2 + 10, pColor, anim.arm, true);
+
+  // batter
+  drawPixel(w/2 + 22, h - 60, '#c84a46', anim.swing, false);
+
+  // ball
+  if (anim.ball) {
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(anim.ball.x, anim.ball.y, 7, 0, Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  if (anim.hit) {
+    ctx.fillStyle = '#ff0';
+    ctx.beginPath();
+    ctx.arc(anim.hit.x, anim.hit.y, 6, 0, Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = '#000';
+    ctx.stroke();
+  }
+
+  // crowd
+  ctx.fillStyle = '#1a3a28';
+  ctx.fillRect(0, 0, w, 36);
+  for (let i = 0; i < 70; i++) {
+    ctx.fillStyle = ['#e44','#4ae','#fe4','#fff','#a4e'][i%5];
+    ctx.fillRect((i * 9) % w, 6 + (i % 4) * 6, 3, 3);
+  }
+
+  // pitch type label
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 14px Courier New';
+  ctx.textAlign = 'center';
+  const label = PITCHES[pitchType].name;
+  ctx.fillText(label, w/2, 55);
 }
-function newGame() {
-  gameState = { inning:1, outs:0, balls:0, strikes:0, runs:0, oppRuns:0, bases:[false,false,false], batterIndex:0, pitching:false, stamina:100 };
-  anim = { arm:0, swing:0, ball:null, hit:null, phase:'idle' };
-  if (animId) cancelAnimationFrame(animId);
-  log('New game! Tap the field to pitch.');
-  updateUI();
-  draw();
-}
-function getBatter() {
-  const starters = state.lineup.filter(i=>i!=null && state.roster[i]).map(i=>state.roster[i]);
-  return starters.length ? starters[gameState.batterIndex % starters.length] : null;
-}
-function getPitcher() { return state.pitcherIdx!=null && state.roster[state.pitcherIdx] ? state.roster[state.pitcherIdx] : null; }
-function updateUI() {
-  if (!gameState) return;
-  document.getElementById('inning').textContent = gameState.inning;
-  document.getElementById('outs').textContent = gameState.outs;
-  document.getElementById('count').textContent = gameState.balls + '-' + gameState.strikes;
-  document.getElementById('runs').textContent = gameState.runs;
-  document.getElementById('oppRuns').textContent = gameState.oppRuns;
-  const b = getBatter(), p = getPitcher();
-  document.getElementById('batterPanel').innerHTML = b ? `${b.emoji} <b>${b.name}</b> (${b.rating} ${b.tier})<br>CON ${b.contact} · POW ${b.power} · SPD ${b.speed}` : 'No lineup';
-  document.getElementById('pitcherPanel').innerHTML = p ? `P: ${p.name} (${p.rating})<br>Stamina ${Math.round(gameState.stamina)}` : 'No pitcher';
-  document.getElementById('tapHint').textContent = gameState.pitching ? 'TAP TO SWING' : 'TAP TO PITCH';
-}
-function log(msg) { const el = document.getElementById('gameLog'); el.innerHTML += '<div>' + msg + '</div>'; el.scrollTop = el.scrollHeight; }
 
 function onTap() {
-  if (!gameState || !getBatter()) return toast('Set a lineup first');
-  if (anim.phase === 'idle') startPitch();
-  else if (anim.phase === 'pitching') resolve(true);
+  if (phase === 'idle') startPitch();
+  else if (phase === 'pitching') swing();
 }
+
+canvas.onclick = onTap;
+document.getElementById('fieldWrap').onclick = (e) => {
+  if (e.target === canvas) return;
+  onTap();
+};
+
 function startPitch() {
-  if (anim.phase !== 'idle') return;
-  anim.phase = 'pitching';
-  gameState.pitching = true;
-  gameState.stamina = Math.max(0, gameState.stamina - 1.2);
+  if (phase !== 'idle') return;
+  phase = 'pitching';
+  pitches++;
+  pitchType = pickPitch();
+  const p = PITCHES[pitchType];
   anim.arm = 0;
-  anim.ball = { x: 300, y: 210, vy: 3.5 };
   anim.swing = 0;
-  updateUI();
-  log('Pitch!');
+  anim.ball = {
+    x: canvas.width / 2,
+    y: canvas.height / 2 + 10,
+    baseY: canvas.height / 2 + 10,
+    speed: 3.2 * p.speed,
+    curve: p.curve,
+    loop: p.loop,
+    t: 0
+  };
+  anim.hit = null;
+  hint.textContent = 'TAP TO SWING!';
+  updateScore();
   animate();
 }
+
 function animate() {
-  if (anim.phase === 'pitching') {
-    anim.arm = Math.min(1, anim.arm + 0.06);
-    if (anim.ball) { anim.ball.y += anim.ball.vy; anim.ball.vy += 0.12; }
-    draw();
-    if (anim.ball && anim.ball.y < 340) {
-      animId = requestAnimationFrame(animate);
-    } else if (anim.phase === 'pitching') {
-      setTimeout(() => { if (anim.phase === 'pitching') resolve(false); }, 150);
+  if (phase !== 'pitching') return;
+  anim.arm = Math.min(1, anim.arm + 0.07);
+  if (anim.ball) {
+    const b = anim.ball;
+    b.t += 1;
+    b.y += b.speed;
+    b.speed += 0.08;
+    // curve / slider
+    if (b.curve) b.x += Math.sin(b.t * 0.15) * b.curve * 1.8;
+    // loop
+    if (b.loop) b.y += Math.sin(b.t * 0.25) * b.loop * 6;
+    // rainbow chaos
+    if (pitchType === 'rainbow') {
+      b.x += (Math.random() - 0.5) * 4;
+      b.speed += (Math.random() - 0.5) * 0.4;
     }
   }
+  draw();
+  if (anim.ball && anim.ball.y < canvas.height - 70) {
+    animId = requestAnimationFrame(animate);
+  } else if (phase === 'pitching') {
+    setTimeout(() => { if (phase === 'pitching') resolve(false); }, 120);
+  }
 }
+
+function swing() {
+  if (phase !== 'pitching') return;
+  resolve(true);
+}
+
 function resolve(swung) {
-  if (anim.phase !== 'pitching') return;
-  anim.phase = 'resolving';
-  gameState.pitching = false;
-  const batter = getBatter();
-  if (!batter) { anim.phase = 'idle'; return; }
+  if (phase !== 'pitching') return;
+  phase = 'resolving';
+  if (animId) cancelAnimationFrame(animId);
+
   if (swung) {
     anim.swing = 0;
     let s = 0;
-    const swingAnim = () => { s++; anim.swing = Math.min(1, s*0.15); draw(); if (s < 8) requestAnimationFrame(swingAnim); };
-    swingAnim();
+    const doSwing = () => {
+      s++;
+      anim.swing = Math.min(1, s * 0.18);
+      draw();
+      if (s < 7) requestAnimationFrame(doSwing);
+    };
+    doSwing();
   }
-  const inZone = Math.random() < 0.65;
+
+  const p = PITCHES[pitchType];
+  const inZone = Math.random() < (pitchType === 'rainbow' ? 0.5 : 0.68);
+  const timing = swung && anim.ball && anim.ball.y > 280 && anim.ball.y < 360;
+
   if (!swung) {
-    if (!inZone) {
-      gameState.balls++; log('Ball!');
-      if (gameState.balls >= 4) { log('Walk!'); advance(1); nextBatter(); }
+    // miss / take
+    streak = 0;
+  } else if (inZone && (timing || Math.random() < 0.55)) {
+    // hit!
+    const power = 0.6 + Math.random() * 0.5 + (timing ? 0.25 : 0);
+    const isHR = power > 0.95 || (timing && Math.random() < 0.45);
+    if (isHR) {
+      hrs++;
+      streak++;
+      logMsg('HOME RUN!!!');
     } else {
-      gameState.strikes++; log('Strike!');
-      if (gameState.strikes >= 3) { log('Strikeout!'); gameState.outs++; nextBatter(); }
+      streak = 0;
+      logMsg(power > 0.7 ? 'Deep fly!' : 'Contact!');
     }
+    // hit ball fly
+    anim.hit = {
+      x: canvas.width / 2,
+      y: canvas.height - 60,
+      vx: (Math.random() - 0.5) * 6,
+      vy: -8 - power * 4
+    };
+    let f = 0;
+    const fly = () => {
+      if (!anim.hit) return;
+      anim.hit.x += anim.hit.vx;
+      anim.hit.y += anim.hit.vy;
+      anim.hit.vy += 0.28;
+      f++;
+      draw();
+      if (f < 50 && anim.hit.y < canvas.height + 20) requestAnimationFrame(fly);
+      else anim.hit = null;
+    };
+    fly();
   } else {
-    const chance = (batter.contact/100) * (inZone ? 0.75 : 0.35) + (Math.random()<0.5?0.15:0);
-    if (Math.random() < chance) {
-      const roll = Math.random() + batter.power/300;
-      let bases = 1, msg = 'Single!';
-      if (roll > 0.88) { bases = 4; msg = 'HOME RUN!'; }
-      else if (roll > 0.72) { bases = 3; msg = 'Triple!'; }
-      else if (roll > 0.5) { bases = 2; msg = 'Double!'; }
-      log(msg);
-      anim.hit = { x: 300, y: 340, vx: (Math.random()-0.5)*5, vy: -7 };
-      let f = 0;
-      const hitAnim = () => {
-        if (!anim.hit) return;
-        anim.hit.x += anim.hit.vx; anim.hit.y += anim.hit.vy; anim.hit.vy += 0.3;
-        f++; draw();
-        if (f < 35 && anim.hit.y < 420) requestAnimationFrame(hitAnim); else anim.hit = null;
-      };
-      hitAnim();
-      advance(bases); nextBatter();
-    } else {
-      gameState.strikes++; log('Miss!');
-      if (gameState.strikes >= 3) { log('Strikeout!'); gameState.outs++; nextBatter(); }
-    }
+    streak = 0;
+    logMsg('Swing and a miss!');
   }
+
   anim.ball = null;
-  checkInning();
-  updateUI();
-  setTimeout(() => { anim.phase = 'idle'; draw(); }, 200);
-}
-function advance(bases) {
-  for (let i = 0; i < bases; i++) {
-    if (gameState.bases[2]) { gameState.runs++; log('Run scores!'); }
-    gameState.bases[2] = gameState.bases[1];
-    gameState.bases[1] = gameState.bases[0];
-    gameState.bases[0] = true;
-  }
-  if (bases >= 4) { gameState.runs += gameState.bases.filter(Boolean).length + 1; gameState.bases = [false,false,false]; log('All score!'); }
-}
-function nextBatter() { gameState.batterIndex++; gameState.balls = 0; gameState.strikes = 0; }
-function checkInning() {
-  if (gameState.outs >= 3) {
-    gameState.outs = 0; gameState.inning++; gameState.bases = [false,false,false];
-    const ovr = parseInt(document.getElementById('teamOvr').textContent) || 55;
-    const p = getPitcher();
-    const chance = 0.32 - (ovr-50)*0.003 - (p ? p.rating/400 : 0);
-    let scored = Math.random() < chance ? Math.floor(Math.random()*3)+1 : 0;
-    gameState.oppRuns += scored;
-    if (scored) log('Opponent scores ' + scored);
-    log('End of inning. ' + gameState.runs + '-' + gameState.oppRuns);
-    if (gameState.inning > 5) endGame();
-  }
-}
-function endGame() {
-  const win = gameState.runs > gameState.oppRuns;
-  const reward = win ? 100 + gameState.runs * 10 : 25;
-  state.coins += reward;
-  state.lineup.forEach(idx => {
-    if (idx != null && state.roster[idx]) {
-      state.roster[idx].xp += win ? 20 : 10;
-      if (state.roster[idx].xp >= 100) {
-        state.roster[idx].xp -= 100; state.roster[idx].level++;
-        state.roster[idx].rating = Math.min(99, state.roster[idx].rating + 1);
-        toast(state.roster[idx].name + ' leveled up!');
-      }
-    }
-  });
-  const next = state.season.schedule.find(g=>!g.played);
-  if (next) { next.played = true; next.result = win ? 'W' : 'L'; if (win) state.season.wins++; else state.season.losses++; }
-  log(win ? 'YOU WIN! +$' + reward : 'Lost. +$' + reward);
-  toast(win ? 'Victory!' : 'Try again');
-  gameState = null; anim.phase = 'idle';
-  save(); renderAll();
-}
-document.getElementById('advanceBtn').onclick = () => {
-  if (!gameState || anim.phase !== 'idle') return;
-  if (gameState.bases[2]) { gameState.runs++; log('Run scores!'); }
-  gameState.bases[2] = gameState.bases[1];
-  gameState.bases[1] = gameState.bases[0];
-  gameState.bases[0] = false;
-  updateUI(); draw();
-};
-document.getElementById('newGameBtn').onclick = newGame;
-function startNextGame() {
-  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-  document.querySelector('[data-view="game"]').classList.add('active');
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.getElementById('game').classList.add('active');
-  initGame(); newGame();
+  updateScore();
+  setTimeout(() => {
+    phase = 'idle';
+    hint.textContent = 'TAP TO PITCH';
+    draw();
+  }, 600);
 }
 
-function drawPixel(x, y, color, arm, isP) {
-  ctx.fillStyle = isP ? '#3a6ea5' : '#c84a46';
-  ctx.fillRect(x-6, y-16, 12, 18);
-  ctx.fillStyle = '#f4c28a';
-  ctx.fillRect(x-5, y-26, 10, 10);
-  ctx.fillStyle = isP ? '#2a5aa0' : '#a33';
-  ctx.fillRect(x-6, y-28, 12, 4);
-  ctx.strokeStyle = isP ? '#333' : '#8b4513';
-  ctx.lineWidth = isP ? 3 : 4;
-  ctx.beginPath();
-  ctx.moveTo(x + (isP?6:-6), y-10);
-  const ang = isP ? (arm * Math.PI - 0.8) : (-1 + arm * 2.4);
-  ctx.lineTo(x + Math.cos(ang)*14, y-8 + Math.sin(ang)*10);
-  ctx.stroke();
-}
-function draw() {
-  if (!ctx) return;
-  const w = 600, h = 420;
-  ctx.fillStyle = '#2d5a3a'; ctx.fillRect(0,0,w,h);
-  ctx.fillStyle = '#266b40'; for (let y=0;y<h;y+=14) ctx.fillRect(0,y,w,7);
-  ctx.fillStyle = '#8b6914';
-  ctx.beginPath(); ctx.moveTo(300,400); ctx.lineTo(170,240); ctx.lineTo(300,90); ctx.lineTo(430,240); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = '#fff';
-  [[300,380],[200,250],[300,120],[400,250]].forEach(([x,y])=>ctx.fillRect(x-7,y-7,14,14));
-  ctx.fillStyle = '#a67c52'; ctx.beginPath(); ctx.arc(300,230,15,0,Math.PI*2); ctx.fill();
-  ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.strokeRect(272,350,56,30);
-  // runners
-  if (gameState) {
-    if (gameState.bases[0]) drawPixel(200, 250, '#fff', 0, false);
-    if (gameState.bases[1]) drawPixel(300, 120, '#fff', 0, false);
-    if (gameState.bases[2]) drawPixel(400, 250, '#fff', 0, false);
-  }
-  drawPixel(300, 220, '#fff', anim.arm, true);
-  drawPixel(318, 360, '#fff', anim.swing, false);
-  if (anim.ball) { ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(anim.ball.x, anim.ball.y, 6, 0, Math.PI*2); ctx.fill(); ctx.strokeStyle='#000'; ctx.stroke(); }
-  if (anim.hit) { ctx.fillStyle='#ff0'; ctx.beginPath(); ctx.arc(anim.hit.x, anim.hit.y, 5, 0, Math.PI*2); ctx.fill(); }
-  ctx.fillStyle = '#1a3a28'; ctx.fillRect(0,0,w,32);
-  for (let i=0;i<50;i++) { ctx.fillStyle=['#e44','#4ae','#fe4','#fff'][i%4]; ctx.fillRect((i*12)%w, 6+(i%3)*6, 3,3); }
+function logMsg(msg) {
+  // quick flash in hint
+  const old = hint.textContent;
+  hint.textContent = msg;
+  setTimeout(() => { if (phase !== 'idle') hint.textContent = old; }, 800);
 }
 
-load(); renderAll();
+function resetGame() {
+  hrs = 0;
+  pitches = 0;
+  streak = 0;
+  phase = 'idle';
+  anim = { arm: 0, swing: 0, ball: null, hit: null };
+  if (animId) cancelAnimationFrame(animId);
+  updateScore();
+  hint.textContent = 'TAP TO PITCH';
+  draw();
+}
+
+// init
+pitchType = 'white';
+updateScore();
+draw();
 </script>
 </body>
 </html>
