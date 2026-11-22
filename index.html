@@ -396,12 +396,12 @@ function resolve(swung) {
       const coinReward = Math.floor(clampedDist / 10) + 15;
       coins += coinReward;
       logMsg('HOME RUN! ' + clampedDist + ' ft (+' + coinReward + ' coins)');
-      // Ball flies over the fence
+      // Ball flies OVER the fence
       anim.hit = {
-        x: canvas.width / 2 + pull * 20,
+        x: canvas.width / 2 + pull * 15,
         y: canvas.height - 70,
-        vx: pull * 2.5,
-        vy: -9 - timingQuality * 3,
+        vx: pull * 1.8,
+        vy: -11 - timingQuality * 4,
         overFence: true
       };
     } else {
@@ -423,15 +423,14 @@ function resolve(swung) {
       if (!anim.hit) return;
       anim.hit.x += anim.hit.vx;
       anim.hit.y += anim.hit.vy;
-      anim.hit.vy += 0.22;
+      anim.hit.vy += 0.18;
       f++;
       draw();
-      // If HR, let it go past the fence
-      const fenceY = 55;
-      if (anim.hit.overFence && anim.hit.y < fenceY && f > 10) {
-        anim.hit.vy *= 0.6;
+      // Keep HR balls flying until they clearly go past the fence
+      if (anim.hit.overFence && anim.hit.y > 40) {
+        anim.hit.vy = Math.min(anim.hit.vy, -2);
       }
-      if (f < 70 && anim.hit.y < canvas.height + 50) requestAnimationFrame(fly);
+      if (f < 90 && anim.hit.y > -20) requestAnimationFrame(fly);
       else anim.hit = null;
     };
     fly();
