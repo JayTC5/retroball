@@ -374,21 +374,22 @@ function resolve(swung) {
   if (!swung) {
     outs++;
     logMsg('Out!');
-  } else if (inZone && timingQuality > 0.45) {
+  } else if (inZone && timingQuality > 0.35) {
     // Harder exit velocity
-    const exitVelo = 82 + timingQuality * 38;
+    const exitVelo = 90 + timingQuality * 45;
     const pull = (ball.x - canvas.width/2) / 40;
-    const launchAngle = 16 + timingQuality * 12 + (Math.random()-0.5)*4;
+    const launchAngle = 20 + timingQuality * 15 + (Math.random()-0.5)*4;
 
-    const dist = Math.round(exitVelo * 2.6 + launchAngle * 1.4 + (Math.random()-0.5)*18);
-    const clampedDist = Math.max(280, Math.min(460, dist));
+    const dist = Math.round(exitVelo * 2.9 + launchAngle * 1.6 + (Math.random()-0.5)*15);
+    const clampedDist = Math.max(300, Math.min(480, dist));
 
     // Determine fence based on direction
     let fenceDist = FENCE.center;
     if (pull < -0.35) fenceDist = FENCE.left;
     else if (pull > 0.35) fenceDist = FENCE.right;
 
-    const isHR = clampedDist >= fenceDist;
+    // Good timing = home run
+    const isHR = timingQuality > 0.62 || clampedDist >= fenceDist;
 
     if (isHR) {
       hrs++;
