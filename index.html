@@ -6,171 +6,68 @@
 <title>RETROBALL</title>
 <style>
 :root {
-  --ink: #0a1f16;
-  --cream: #f8f0d0;
-  --gold: #f4c430;
-  --green: #1a6b42;
-  --dark-green: #0d3d26;
-  --red: #d44a46;
-  --blue: #2a5aa0;
-  --dirt: #8b6914;
-  --grass: #2d5a3a;
+  --ink: #0a1f16; --cream: #f8f0d0; --gold: #f4c430; --green: #1a6b42;
+  --dark-green: #0d3d26; --red: #d44a46; --blue: #2a5aa0;
 }
 * { box-sizing: border-box; image-rendering: pixelated; }
-body {
-  margin: 0;
-  min-height: 100vh;
-  background: #06140f;
-  color: var(--ink);
-  font-family: "Courier New", Courier, monospace;
-}
+body { margin: 0; min-height: 100vh; background: #06140f; color: var(--ink); font-family: "Courier New", monospace; }
 button { font-family: inherit; cursor: pointer; border: none; }
-.app {
-  max-width: 1100px;
-  margin: 0 auto;
-  min-height: 100vh;
-  background: var(--cream);
-  border-left: 8px solid #1a2c22;
-  border-right: 8px solid #1a2c22;
-}
-header {
-  background: var(--green);
-  color: white;
-  padding: 10px 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 5px solid var(--gold);
-}
+.app { max-width: 1000px; margin: 0 auto; min-height: 100vh; background: var(--cream); border-left: 8px solid #1a2c22; border-right: 8px solid #1a2c22; }
+header { background: var(--green); color: white; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 5px solid var(--gold); }
 .brand { display: flex; align-items: center; gap: 10px; }
-.brand-mark {
-  width: 46px; height: 46px; background: var(--cream); color: var(--green);
-  border: 3px solid white; border-radius: 4px; display: grid; place-items: center;
-  font-size: 24px; font-weight: bold;
-}
-h1 { margin: 0; font-size: 22px; letter-spacing: 1px; text-transform: uppercase; }
-.coins {
-  background: var(--dark-green); border: 3px solid white; padding: 6px 14px;
-  font-size: 18px; font-weight: bold;
-}
-nav {
-  display: flex; background: var(--ink); padding: 4px; gap: 3px; flex-wrap: wrap;
-}
-nav button {
-  flex: 1; min-width: 90px; padding: 10px 6px; background: #2a4a38; color: var(--cream);
-  text-transform: uppercase; font-weight: bold; font-size: 12px;
-}
-nav button.active { background: var(--gold); color: var(--ink); box-shadow: inset 0 -3px #b8860b; }
+.brand-mark { width: 46px; height: 46px; background: var(--cream); color: var(--green); border: 3px solid white; display: grid; place-items: center; font-size: 24px; font-weight: bold; }
+h1 { margin: 0; font-size: 22px; letter-spacing: 1px; }
+.coins { background: var(--dark-green); border: 3px solid white; padding: 6px 14px; font-size: 18px; font-weight: bold; }
+nav { display: flex; background: var(--ink); padding: 4px; gap: 3px; flex-wrap: wrap; }
+nav button { flex: 1; min-width: 80px; padding: 10px 6px; background: #2a4a38; color: var(--cream); text-transform: uppercase; font-weight: bold; font-size: 12px; }
+nav button.active { background: var(--gold); color: var(--ink); }
 main { padding: 12px; }
 .view { display: none; }
 .view.active { display: block; }
-.panel {
-  border: 4px solid var(--ink);
-  background: #fffdf5;
-  box-shadow: 5px 5px 0 #c8bc94;
-  margin-bottom: 12px;
-}
-.panel-title {
-  background: var(--ink); color: white; padding: 6px 10px;
-  font-weight: bold; text-transform: uppercase; font-size: 13px;
-}
-.hub-stats {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px; padding: 12px;
-}
-.stat-box {
-  border: 3px solid var(--ink); background: #f5edd8; padding: 8px; text-align: center;
-}
+.panel { border: 4px solid var(--ink); background: #fffdf5; box-shadow: 5px 5px 0 #c8bc94; margin-bottom: 12px; }
+.panel-title { background: var(--ink); color: white; padding: 6px 10px; font-weight: bold; text-transform: uppercase; font-size: 13px; }
+.hub-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; padding: 12px; }
+.stat-box { border: 3px solid var(--ink); background: #f5edd8; padding: 8px; text-align: center; }
 .stat-box b { display: block; font-size: 20px; color: var(--green); }
-.play-big {
-  display: block; width: 100%; margin: 12px auto; padding: 18px; background: var(--gold);
-  color: var(--ink); font-size: 20px; font-weight: bold; border: 4px solid var(--ink);
-  text-transform: uppercase;
-}
-.roster-grid, .fa-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 10px; padding: 10px;
-}
-.player-card {
-  border: 3px solid var(--ink); padding: 6px; text-align: center;
-  background: #f5edd8; box-shadow: 3px 3px #b8ae88; cursor: pointer;
-  font-size: 12px;
-}
+.play-big { display: block; width: 100%; margin: 12px auto; padding: 18px; background: var(--gold); color: var(--ink); font-size: 20px; font-weight: bold; border: 4px solid var(--ink); }
+.roster-grid, .fa-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; padding: 10px; }
+.player-card { border: 3px solid var(--ink); padding: 6px; text-align: center; background: #f5edd8; cursor: pointer; font-size: 12px; }
 .player-card.black { background: #333; color: #eee; }
 .player-card.bronze { background: #e6c7a0; }
 .player-card.silver { background: #e8e8e8; }
 .player-card.gold { background: #ffe566; }
 .player-card.diamond { background: #81d4fa; color: #003; }
-.portrait { font-size: 40px; height: 48px; display: grid; place-items: center; }
+.portrait { font-size: 36px; height: 44px; display: grid; place-items: center; }
 .player-name { font-weight: bold; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.rating {
-  width: 36px; height: 36px; border-radius: 50%; background: var(--gold);
-  border: 2px solid var(--ink); margin: 4px auto; display: grid; place-items: center;
-  font-weight: bold; font-size: 14px;
-}
-.xp-bar { height: 6px; background: #ccc; border: 1px solid #333; margin: 4px 0; }
-.xp-fill { height: 100%; background: var(--green); width: 0%; }
-.stats-mini { display: grid; grid-template-columns: 1fr 1fr 1fr; font-size: 9px; gap: 1px; }
-.stats-mini b { display: block; font-size: 11px; }
+.rating { width: 34px; height: 34px; border-radius: 50%; background: var(--gold); border: 2px solid var(--ink); margin: 4px auto; display: grid; place-items: center; font-weight: bold; }
 .lineup-slots { display: grid; gap: 6px; padding: 8px; }
-.line-slot {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 8px 10px; border: 2px solid #aaa; font-size: 13px;
-  background: #fff; border-radius: 4px;
-}
-.line-slot.starter { background: #e8f5e9; border-color: #4caf50; }
-.line-slot.pitcher { background: #fff3e0; border-color: #ff9800; }
-.quick-actions { padding: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
+.line-slot { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border: 2px solid #aaa; background: #fff; }
+.line-slot.starter { background: #e8f5e9; }
+.line-slot.pitcher { background: #fff3e0; }
+.quick-actions { padding: 8px; display: flex; gap: 8px; }
 .quick-actions button { padding: 8px 12px; background: var(--green); color: white; border: 2px solid #000; font-weight: bold; }
-.game-layout { display: grid; grid-template-columns: 1fr 300px; gap: 12px; }
+.game-layout { display: grid; grid-template-columns: 1fr 280px; gap: 12px; }
 @media (max-width: 800px) { .game-layout { grid-template-columns: 1fr; } }
-.field-wrap {
-  position: relative; background: var(--grass); border: 4px solid var(--ink);
-  height: 400px; overflow: hidden; cursor: pointer;
-}
+.field-wrap { position: relative; background: #2d5a3a; border: 4px solid var(--ink); height: 420px; cursor: pointer; }
 canvas#gameCanvas { width: 100%; height: 100%; display: block; }
-.scoreboard {
-  display: grid; grid-template-columns: repeat(6, 1fr); background: var(--ink); color: white;
-  text-align: center; font-size: 12px;
-}
-.scoreboard div { padding: 6px 2px; border-right: 1px solid #333; }
+.scoreboard { display: grid; grid-template-columns: repeat(5, 1fr); background: var(--ink); color: white; text-align: center; font-size: 12px; }
+.scoreboard div { padding: 6px 2px; }
 .scoreboard b { display: block; font-size: 16px; }
-.batter-panel, .pitcher-panel {
-  background: #1a2c22; color: white; padding: 8px; border: 3px solid var(--ink);
-  margin-top: 8px; font-size: 12px;
-}
-.bar { height: 8px; background: #333; border: 1px solid #666; margin: 2px 0 6px; }
+.batter-panel, .pitcher-panel { background: #1a2c22; color: white; padding: 8px; border: 3px solid var(--ink); margin-top: 8px; font-size: 12px; }
+.bar { height: 8px; background: #333; margin: 2px 0 6px; }
 .bar-fill { height: 100%; background: var(--gold); }
 .game-controls { padding: 8px; }
-.game-controls button {
-  width: 100%; margin: 4px 0; padding: 12px; background: var(--gold); color: var(--ink);
-  font-weight: bold; font-size: 15px; border: 3px solid var(--ink);
-}
-.game-controls button:disabled { opacity: 0.4; cursor: not-allowed; }
-#gameLog {
-  height: 120px; overflow-y: auto; border: 3px solid var(--ink);
-  background: #fffdf5; padding: 6px; font-size: 11px; margin-top: 6px;
-}
-.tap-hint {
-  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
-  background: rgba(0,0,0,0.7); color: white; padding: 6px 12px; font-size: 13px;
-  border: 2px solid var(--gold); pointer-events: none;
-}
-.toast {
-  position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%) translateY(120px);
-  background: var(--ink); color: white; border: 3px solid var(--gold);
-  padding: 10px 18px; z-index: 200; transition: transform 0.2s; font-size: 14px;
-}
+.game-controls button { width: 100%; margin: 4px 0; padding: 12px; background: var(--gold); color: var(--ink); font-weight: bold; font-size: 15px; border: 3px solid var(--ink); }
+#gameLog { height: 130px; overflow-y: auto; border: 3px solid var(--ink); background: #fffdf5; padding: 6px; font-size: 12px; margin-top: 6px; }
+.tap-hint { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 8px 14px; font-size: 14px; border: 2px solid var(--gold); pointer-events: none; font-weight: bold; }
+.toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%) translateY(120px); background: var(--ink); color: white; border: 3px solid var(--gold); padding: 10px 18px; z-index: 200; transition: transform 0.2s; }
 .toast.show { transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 <div class="app">
   <header>
-    <div class="brand">
-      <div class="brand-mark">R</div>
-      <h1>RETROBALL</h1>
-    </div>
+    <div class="brand"><div class="brand-mark">R</div><h1>RETROBALL</h1></div>
     <div class="coins">$ <span id="coins">2500</span></div>
   </header>
   <nav>
@@ -188,55 +85,41 @@ canvas#gameCanvas { width: 100%; height: 100%; display: block; }
         <div class="hub-stats">
           <div class="stat-box">Record<br><b id="record">0-0</b></div>
           <div class="stat-box">Team OVR<br><b id="hubOvr">--</b></div>
-          <div class="stat-box">Stadium<br><b id="stadiumLvl">1</b></div>
-          <div class="stat-box">Morale<br><b id="morale">70</b></div>
-          <div class="stat-box">Next Game<br><b id="nextOpp">TBD</b></div>
+          <div class="stat-box">Next<br><b id="nextOpp">TBD</b></div>
         </div>
-        <button class="play-big" onclick="startNextGame()">PLAY NEXT GAME</button>
-        <div style="padding: 0 12px 12px; font-size: 13px;">
-          <button onclick="upgradeStadium()" style="padding:8px 12px; background:#2a5aa0; color:white; border:2px solid #000;">Upgrade Stadium ($800)</button>
-          <span style="margin-left:10px;">Better stadium = higher morale</span>
-        </div>
+        <button class="play-big" onclick="startNextGame()">PLAY BALL</button>
       </div>
     </section>
-
     <section id="roster" class="view">
       <div class="panel">
-        <div class="panel-title">My Roster <span id="rosterCount"></span></div>
-        <div style="padding:8px; font-size:12px;">Click a player to select them for lineup assignment.</div>
+        <div class="panel-title">Roster <span id="rosterCount"></span></div>
+        <div style="padding:8px;font-size:12px;">Click a player, then click a slot in Lineup.</div>
         <div class="roster-grid" id="players"></div>
       </div>
     </section>
-
     <section id="lineup" class="view">
       <div class="panel">
-        <div class="panel-title">Lineup & Rotation (OVR: <span id="teamOvr">--</span>)</div>
+        <div class="panel-title">Lineup (OVR: <span id="teamOvr">--</span>)</div>
         <div class="quick-actions">
-          <button onclick="autoFillBest()">Auto Best 9 + Pitcher</button>
-          <button onclick="clearLineup()">Clear Lineup</button>
+          <button onclick="autoFillBest()">Auto Best</button>
+          <button onclick="clearLineup()">Clear</button>
         </div>
         <div class="lineup-slots" id="lineupSlots"></div>
-        <p style="padding:8px;font-size:12px;"><b>How to set:</b> Click a player in the Roster tab, then click the slot here (or use Auto Best). Pitcher is set the same way.</p>
       </div>
     </section>
-
     <section id="freeagents" class="view">
       <div class="panel">
         <div class="panel-title">Free Agents</div>
         <div class="fa-grid" id="faGrid"></div>
-        <div style="padding:8px;">
-          <button onclick="refreshFreeAgents()" style="padding:8px; background:var(--green); color:white; border:2px solid #000;">Refresh List ($150)</button>
-        </div>
+        <div style="padding:8px;"><button onclick="refreshFreeAgents()" style="padding:8px;background:var(--green);color:white;">Refresh ($150)</button></div>
       </div>
     </section>
-
     <section id="season" class="view">
       <div class="panel">
-        <div class="panel-title">Season Schedule & Standings</div>
-        <div id="scheduleList" style="padding:8px; font-size:13px;"></div>
+        <div class="panel-title">Season</div>
+        <div id="scheduleList" style="padding:8px;font-size:13px;"></div>
       </div>
     </section>
-
     <section id="game" class="view">
       <div class="game-layout">
         <div>
@@ -244,683 +127,366 @@ canvas#gameCanvas { width: 100%; height: 100%; display: block; }
             <div>INN<br><b id="inning">1</b></div>
             <div>OUT<br><b id="outs">0</b></div>
             <div>B-S<br><b id="count">0-0</b></div>
-            <div>RUNS<br><b id="runs">0</b></div>
+            <div>YOU<br><b id="runs">0</b></div>
             <div>OPP<br><b id="oppRuns">0</b></div>
-            <div>STA<br><b id="stamina">100</b></div>
           </div>
-          <div class="field-wrap" id="fieldWrap">
-            <canvas id="gameCanvas" width="640" height="400"></canvas>
-            <div class="tap-hint" id="tapHint">TAP FIELD TO PITCH</div>
+          <div class="field-wrap">
+            <canvas id="gameCanvas" width="600" height="420"></canvas>
+            <div class="tap-hint" id="tapHint">TAP TO PITCH</div>
           </div>
         </div>
         <div class="panel">
           <div class="panel-title">At Bat</div>
-          <div class="batter-panel" id="batterPanel">Waiting for lineup...</div>
-          <div class="pitcher-panel" id="pitcherPanel">Pitcher stamina loading...</div>
+          <div class="batter-panel" id="batterPanel">Ready</div>
+          <div class="pitcher-panel" id="pitcherPanel">Pitcher</div>
           <div class="game-controls">
-            <button id="advanceBtn" disabled>ADVANCE RUNNERS</button>
+            <button id="advanceBtn">ADVANCE RUNNERS</button>
             <button id="newGameBtn" style="background:#3266a8;color:white;">NEW GAME</button>
           </div>
-          <div id="gameLog">Tap the field to pitch, then tap again to swing!</div>
+          <div id="gameLog">Tap the field to pitch, then tap again to swing.</div>
         </div>
       </div>
     </section>
   </main>
 </div>
 <div class="toast" id="toast"></div>
-
 <script>
-const NAMES = ['Ace Walker','Billy Bunts','Carlos Vega','Duke Davis','Eddie Flash','Frank Flint','Gus Green','Harry Horn','Ivy Jones','Jack Slugger','Leo Long','Manny Mound','Nate Nitro','Otto Oak','Pete Power','Ray Rocket','Sam Slam','Tex Turner','Vic Velocity','Will Wright','Zane Zip','Bobby Barrels','Chuck Curve','Danny Dinger','Ellie Ember','Fiona Flame','Gia Gold','Hank Hammer','Ivy Ice','Jade Jet','Ken Curve','Lou Fastball','Mia Slider'];
-const EMOJIS = ['🏃','🧢','🤾','🧔','👨‍🦰','👱','🧑','👩‍🦰','👨‍🦱','👧'];
-const POSITIONS = ['P','C','1B','2B','3B','SS','LF','CF','RF'];
-const OPP_TEAMS = ['Aces','Bombers','Cyclones','Dragons','Eagles','Falcons','Giants','Hawks','Indians','Jays'];
-const TIER_BASE = { black: 38, bronze: 48, silver: 60, gold: 72, diamond: 85 };
+const NAMES = ['Ace Walker','Billy Bunts','Carlos Vega','Duke Davis','Eddie Flash','Frank Flint','Gus Green','Harry Horn','Ivy Jones','Jack Slugger','Leo Long','Manny Mound','Nate Nitro','Otto Oak','Pete Power','Ray Rocket','Sam Slam','Tex Turner','Vic Velocity','Will Wright'];
+const EMOJIS = ['🏃','🧢','🧔','👱','🧑','👨‍🦰'];
+const POS = ['P','C','1B','2B','3B','SS','LF','CF','RF'];
+const OPPS = ['Aces','Bombers','Cyclones','Dragons','Eagles','Falcons','Giants','Hawks'];
+const TIER_BASE = { black: 40, bronze: 50, silver: 62, gold: 74, diamond: 86 };
 
-let state = {
-  coins: 2500,
-  roster: [],
-  lineup: Array(9).fill(null),
-  pitcherIdx: null,
-  season: { wins: 0, losses: 0, gamesPlayed: 0, schedule: [] },
-  stadium: 1,
-  morale: 70,
-  freeAgents: [],
-  game: null
-};
+let state = { coins: 2500, roster: [], lineup: Array(9).fill(null), pitcherIdx: null, season: { wins:0, losses:0, schedule:[] }, freeAgents: [] };
+let gameState = null;
+let anim = { arm: 0, swing: 0, ball: null, hit: null, phase: 'idle' };
+let canvas, ctx;
+let selectedIdx = null;
+let animId = null;
 
 function load() {
-  const saved = localStorage.getItem('retroball');
-  if (saved) {
-    try {
-      const data = JSON.parse(saved);
-      Object.assign(state, data);
-      if (!state.lineup) state.lineup = Array(9).fill(null);
-    } catch(e) {}
-  }
-  if (state.roster.length === 0) {
-    for (let i = 0; i < 12; i++) {
-      const tier = i < 2 ? 'silver' : i < 5 ? 'bronze' : 'black';
-      state.roster.push(makePlayer(tier));
-    }
+  try { const s = localStorage.getItem('retroball'); if (s) Object.assign(state, JSON.parse(s)); } catch(e){}
+  if (!state.roster || state.roster.length === 0) {
+    state.roster = [];
+    for (let i = 0; i < 12; i++) state.roster.push(makePlayer(i < 3 ? 'silver' : i < 6 ? 'bronze' : 'black'));
     autoFillBest();
-    generateSchedule();
+    state.season.schedule = OPPS.slice(0, 10).map(o => ({ opp: o, played: false, result: null }));
     refreshFreeAgents(true);
   }
   save();
 }
-function save() {
-  localStorage.setItem('retroball', JSON.stringify({
-    coins: state.coins, roster: state.roster, lineup: state.lineup,
-    pitcherIdx: state.pitcherIdx, season: state.season, stadium: state.stadium,
-    morale: state.morale, freeAgents: state.freeAgents
-  }));
-}
-
-function makePlayer(forcedTier) {
-  let tier = forcedTier;
-  if (!tier) {
-    const roll = Math.random();
-    if (roll < 0.03) tier = 'diamond';
-    else if (roll < 0.10) tier = 'gold';
-    else if (roll < 0.28) tier = 'silver';
-    else if (roll < 0.55) tier = 'bronze';
-    else tier = 'black';
-  }
+function save() { localStorage.setItem('retroball', JSON.stringify(state)); }
+function makePlayer(tier) {
+  if (!tier) { const r = Math.random(); tier = r < 0.04 ? 'diamond' : r < 0.12 ? 'gold' : r < 0.32 ? 'silver' : r < 0.6 ? 'bronze' : 'black'; }
   const base = TIER_BASE[tier];
-  const rating = Math.min(99, base + Math.floor(Math.random() * 14));
-  const pos = POSITIONS[Math.floor(Math.random() * POSITIONS.length)];
-  return {
-    id: Date.now() + Math.random(),
-    name: NAMES[Math.floor(Math.random() * NAMES.length)],
-    tier, rating, pos,
-    emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
-    power: Math.min(99, rating - Math.floor(Math.random() * 12)),
-    contact: Math.min(99, rating - Math.floor(Math.random() * 10)),
-    speed: Math.min(99, rating - Math.floor(Math.random() * 14)),
-    xp: 0, level: 1,
-    salary: Math.floor(rating * 1.5) * 10
-  };
+  const rating = Math.min(99, base + Math.floor(Math.random()*14));
+  return { id: Math.random(), name: NAMES[Math.floor(Math.random()*NAMES.length)], tier, rating, pos: POS[Math.floor(Math.random()*POS.length)], emoji: EMOJIS[Math.floor(Math.random()*EMOJIS.length)], power: Math.min(99, rating-Math.floor(Math.random()*10)), contact: Math.min(99, rating-Math.floor(Math.random()*8)), speed: Math.min(99, rating-Math.floor(Math.random()*12)), xp: 0, level: 1 };
 }
-
-function generateSchedule() {
-  state.season.schedule = [];
-  for (let i = 0; i < 12; i++) {
-    state.season.schedule.push({
-      opp: OPP_TEAMS[Math.floor(Math.random() * OPP_TEAMS.length)],
-      played: false, result: null
-    });
-  }
-}
-
-function refreshFreeAgents(free = false) {
-  if (!free) {
-    if (state.coins < 150) { toast('Not enough coins!'); return; }
-    state.coins -= 150;
-  }
+function refreshFreeAgents(free) {
+  if (!free && state.coins < 150) return toast('Need $150');
+  if (!free) state.coins -= 150;
   state.freeAgents = [];
-  for (let i = 0; i < 6; i++) state.freeAgents.push(makePlayer());
-  renderFreeAgents();
-  updateCoins();
-  save();
+  for (let i = 0; i < 5; i++) state.freeAgents.push(makePlayer());
+  renderAll(); save();
 }
-
-function renderHub() {
-  document.getElementById('record').textContent = state.season.wins + '-' + state.season.losses;
-  const starters = state.lineup.filter(i => i !== null && state.roster[i]).map(i => state.roster[i]);
-  const avg = starters.length ? Math.round(starters.reduce((a, p) => a + p.rating, 0) / starters.length) : 0;
-  document.getElementById('hubOvr').textContent = avg || '--';
-  document.getElementById('stadiumLvl').textContent = state.stadium;
-  document.getElementById('morale').textContent = state.morale;
-  const next = state.season.schedule.find(g => !g.played);
-  document.getElementById('nextOpp').textContent = next ? next.opp : 'Season Over';
+function autoFillBest() {
+  const sorted = state.roster.map((p,i)=>({p,i})).sort((a,b)=>b.p.rating-a.p.rating);
+  state.lineup = sorted.slice(0,9).map(x=>x.i);
+  while (state.lineup.length < 9) state.lineup.push(null);
+  const pitchers = state.roster.map((p,i)=>({p,i})).filter(x=>x.p.pos==='P');
+  state.pitcherIdx = pitchers.length ? pitchers.sort((a,b)=>b.p.rating-a.p.rating)[0].i : sorted[0]?.i ?? 0;
+  renderAll(); save();
 }
-
-function renderRoster() {
-  const grid = document.getElementById('players');
-  grid.innerHTML = state.roster.map((p, i) => `
+function clearLineup() { state.lineup = Array(9).fill(null); state.pitcherIdx = null; renderAll(); save(); }
+function selectForLineup(i) { selectedIdx = i; toast('Selected ' + state.roster[i].name); }
+function assignToSlot(slot) {
+  if (selectedIdx == null) return toast('Select a player first');
+  state.lineup = state.lineup.map(x => x === selectedIdx ? null : x);
+  state.lineup[slot] = selectedIdx;
+  selectedIdx = null; renderAll(); save();
+}
+function assignPitcher() {
+  if (selectedIdx == null) return toast('Select a player first');
+  state.pitcherIdx = selectedIdx; selectedIdx = null; renderAll(); save();
+}
+function sellPlayer(i) {
+  if (!confirm('Cut ' + state.roster[i].name + '?')) return;
+  state.coins += Math.floor(state.roster[i].rating);
+  state.lineup = state.lineup.map(x => x === i ? null : (x > i ? x-1 : x));
+  if (state.pitcherIdx === i) state.pitcherIdx = null; else if (state.pitcherIdx > i) state.pitcherIdx--;
+  state.roster.splice(i,1); renderAll(); save();
+}
+function signFreeAgent(i) {
+  const p = state.freeAgents[i];
+  const cost = Math.floor(p.rating * 3);
+  if (state.coins < cost) return toast('Not enough coins');
+  state.coins -= cost;
+  state.roster.push(p);
+  state.freeAgents.splice(i,1);
+  renderAll(); save(); toast('Signed ' + p.name);
+}
+function renderAll() {
+  document.getElementById('coins').textContent = state.coins;
+  const starters = state.lineup.filter(i=>i!=null).map(i=>state.roster[i]).filter(Boolean);
+  const ovr = starters.length ? Math.round(starters.reduce((a,p)=>a+p.rating,0)/starters.length) : 0;
+  document.getElementById('teamOvr').textContent = ovr || '--';
+  document.getElementById('hubOvr').textContent = ovr || '--';
+  document.getElementById('record').textContent = (state.season.wins||0) + '-' + (state.season.losses||0);
+  const next = (state.season.schedule||[]).find(g=>!g.played);
+  document.getElementById('nextOpp').textContent = next ? next.opp : 'Done';
+  document.getElementById('rosterCount').textContent = '(' + state.roster.length + ')';
+  document.getElementById('players').innerHTML = state.roster.map((p,i)=>`
     <div class="player-card ${p.tier}" onclick="selectForLineup(${i})">
       <div class="portrait">${p.emoji}</div>
       <div class="player-name">${p.name}</div>
       <div class="rating">${p.rating}</div>
-      <div class="xp-bar"><div class="xp-fill" style="width:${(p.xp % 100)}%"></div></div>
-      <div style="font-size:9px;">XP ${p.xp} · Lvl ${p.level}</div>
-      <div class="stats-mini">
-        <span>POW<b>${p.power}</b></span>
-        <span>CON<b>${p.contact}</b></span>
-        <span>SPD<b>${p.speed}</b></span>
-      </div>
-      <div style="font-size:10px;margin-top:2px;">${p.pos} · ${p.tier.toUpperCase()}</div>
-      <button style="margin-top:4px;padding:3px;font-size:10px;background:#c84a46;color:white;width:100%;" onclick="event.stopPropagation();sellPlayer(${i})">CUT</button>
-    </div>
-  `).join('');
-  document.getElementById('rosterCount').textContent = `(${state.roster.length})`;
-  updateTeamOvr();
-}
-
-function renderFreeAgents() {
-  const grid = document.getElementById('faGrid');
-  grid.innerHTML = state.freeAgents.map((p, i) => `
+      <div style="font-size:10px;">${p.pos} · ${p.tier.toUpperCase()}</div>
+      <button onclick="event.stopPropagation();sellPlayer(${i})" style="margin-top:4px;padding:2px;font-size:10px;background:#c84a46;color:white;width:100%;">CUT</button>
+    </div>`).join('');
+  document.getElementById('lineupSlots').innerHTML = state.lineup.map((idx,slot)=>{
+    const p = idx!=null && state.roster[idx] ? state.roster[idx] : null;
+    return `<div class="line-slot ${p?'starter':''}" onclick="assignToSlot(${slot})"><b>${POS[slot]||'BAT'+(slot+1)}</b><span>${p?p.name+' ('+p.rating+')':'Empty'}</span><span>${p?p.emoji:'—'}</span></div>`;
+  }).join('') + (()=>{
+    const p = state.pitcherIdx!=null && state.roster[state.pitcherIdx] ? state.roster[state.pitcherIdx] : null;
+    return `<div class="line-slot pitcher" onclick="assignPitcher()"><b>P</b><span>${p?p.name+' ('+p.rating+')':'Empty'}</span><span>${p?p.emoji:'—'}</span></div>`;
+  })();
+  document.getElementById('faGrid').innerHTML = (state.freeAgents||[]).map((p,i)=>`
     <div class="player-card ${p.tier}">
       <div class="portrait">${p.emoji}</div>
       <div class="player-name">${p.name}</div>
       <div class="rating">${p.rating}</div>
-      <div class="stats-mini">
-        <span>POW<b>${p.power}</b></span>
-        <span>CON<b>${p.contact}</b></span>
-        <span>SPD<b>${p.speed}</b></span>
-      </div>
-      <div style="font-size:10px;">${p.pos} · ${p.tier.toUpperCase()} · $${p.salary * 3}</div>
-      <button style="margin-top:4px;padding:4px;font-size:11px;background:var(--green);color:white;width:100%;" onclick="signFreeAgent(${i})">SIGN</button>
-    </div>
-  `).join('');
+      <div style="font-size:10px;">${p.pos} · ${p.tier.toUpperCase()}</div>
+      <button onclick="signFreeAgent(${i})" style="margin-top:4px;padding:4px;background:var(--green);color:white;width:100%;">SIGN $${Math.floor(p.rating*3)}</button>
+    </div>`).join('');
+  document.getElementById('scheduleList').innerHTML = (state.season.schedule||[]).map((g,i)=>`Game ${i+1}: vs ${g.opp} — ${g.played?g.result:'Upcoming'}`).join('<br>');
 }
-
-function renderLineup() {
-  const slots = document.getElementById('lineupSlots');
-  let html = state.lineup.map((idx, slot) => {
-    const p = idx !== null && state.roster[idx] ? state.roster[idx] : null;
-    return `
-      <div class="line-slot ${p ? 'starter' : ''}" onclick="assignToSlot(${slot})">
-        <b>${POSITIONS[slot] || 'BAT' + (slot+1)}</b>
-        <span>${p ? p.name + ' (' + p.rating + ' ' + p.tier + ')' : 'Empty'}</span>
-        <span>${p ? p.emoji : '—'}</span>
-      </div>
-    `;
-  }).join('');
-  const pitcher = state.pitcherIdx !== null && state.roster[state.pitcherIdx] ? state.roster[state.pitcherIdx] : null;
-  html += `
-    <div class="line-slot pitcher" onclick="assignPitcher()">
-      <b>PITCHER</b>
-      <span>${pitcher ? pitcher.name + ' (' + pitcher.rating + ')' : 'Empty'}</span>
-      <span>${pitcher ? pitcher.emoji : '—'}</span>
-    </div>
-  `;
-  slots.innerHTML = html;
-  updateTeamOvr();
-}
-
-function renderSeason() {
-  const list = document.getElementById('scheduleList');
-  list.innerHTML = '<b>Schedule (12 games)</b><br>' + state.season.schedule.map((g, i) => 
-    `Game ${i+1}: vs ${g.opp} — ${g.played ? g.result : 'Upcoming'}`
-  ).join('<br>') + `<br><br><b>Standings:</b> You ${state.season.wins}-${state.season.losses}`;
-}
-
-function updateTeamOvr() {
-  const starters = state.lineup.filter(i => i !== null && state.roster[i]).map(i => state.roster[i]);
-  const avg = starters.length ? Math.round(starters.reduce((a, p) => a + p.rating, 0) / starters.length) : 0;
-  const el = document.getElementById('teamOvr');
-  if (el) el.textContent = avg || '--';
-  const hub = document.getElementById('hubOvr');
-  if (hub) hub.textContent = avg || '--';
-}
-
-let selectedPlayerIdx = null;
-function selectForLineup(idx) {
-  selectedPlayerIdx = idx;
-  toast('Selected ' + state.roster[idx].name + ' — click a slot');
-}
-function assignToSlot(slot) {
-  if (selectedPlayerIdx === null) { toast('First select a player in Roster'); return; }
-  state.lineup = state.lineup.map(i => i === selectedPlayerIdx ? null : i);
-  state.lineup[slot] = selectedPlayerIdx;
-  selectedPlayerIdx = null;
-  renderLineup();
-  save();
-  toast('Lineup updated!');
-}
-function assignPitcher() {
-  if (selectedPlayerIdx === null) { toast('First select a player in Roster'); return; }
-  state.pitcherIdx = selectedPlayerIdx;
-  selectedPlayerIdx = null;
-  renderLineup();
-  save();
-  toast('Pitcher set!');
-}
-function autoFillBest() {
-  const sorted = [...state.roster].map((p, i) => ({p, i})).sort((a, b) => b.p.rating - a.p.rating);
-  state.lineup = sorted.slice(0, 9).map(x => x.i);
-  while (state.lineup.length < 9) state.lineup.push(null);
-  const pitchers = state.roster.map((p, i) => ({p, i})).filter(x => x.p.pos === 'P');
-  state.pitcherIdx = pitchers.length ? pitchers.sort((a,b) => b.p.rating - a.p.rating)[0].i : (sorted[0]?.i ?? null);
-  renderLineup();
-  save();
-  toast('Auto-filled best lineup!');
-}
-function clearLineup() {
-  state.lineup = Array(9).fill(null);
-  state.pitcherIdx = null;
-  renderLineup();
-  save();
-  toast('Lineup cleared');
-}
-function sellPlayer(idx) {
-  const p = state.roster[idx];
-  if (!confirm(`Cut ${p.name}?`)) return;
-  state.coins += Math.floor(p.rating);
-  state.lineup = state.lineup.map(i => i === idx ? null : (i > idx ? i - 1 : i));
-  if (state.pitcherIdx === idx) state.pitcherIdx = null;
-  else if (state.pitcherIdx > idx) state.pitcherIdx--;
-  state.roster.splice(idx, 1);
-  save(); updateCoins(); renderRoster(); renderLineup();
-  toast('Player released');
-}
-function signFreeAgent(idx) {
-  const p = state.freeAgents[idx];
-  const cost = p.salary * 3;
-  if (state.coins < cost) { toast('Not enough coins!'); return; }
-  state.coins -= cost;
-  state.roster.push(p);
-  state.freeAgents.splice(idx, 1);
-  save(); updateCoins(); renderFreeAgents(); renderRoster();
-  toast(`Signed ${p.name}!`);
-}
-function upgradeStadium() {
-  if (state.coins < 800) { toast('Not enough coins!'); return; }
-  state.coins -= 800;
-  state.stadium++;
-  state.morale = Math.min(100, state.morale + 8);
-  updateCoins(); renderHub(); save();
-  toast('Stadium upgraded!');
-}
-function updateCoins() {
-  document.getElementById('coins').textContent = state.coins;
-}
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2000);
-}
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 1800); }
 
 document.querySelectorAll('nav button').forEach(btn => {
   btn.onclick = () => {
-    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
     document.getElementById(btn.dataset.view).classList.add('active');
-    if (btn.dataset.view === 'hub') renderHub();
-    if (btn.dataset.view === 'roster') renderRoster();
-    if (btn.dataset.view === 'lineup') renderLineup();
-    if (btn.dataset.view === 'freeagents') renderFreeAgents();
-    if (btn.dataset.view === 'season') renderSeason();
-    if (btn.dataset.view === 'game') initGameView();
+    if (btn.dataset.view === 'game') initGame();
   };
 });
 
-// ========== GAME WITH ANIMATIONS ==========
-let canvas, ctx;
-let gameState = null;
-let anim = {
-  pitcherArm: 0,      // 0-1 pitch windup
-  batterSwing: 0,     // 0-1 swing
-  ball: null,         // {x, y, vx, vy, hit}
-  hitBall: null
-};
-
-function initGameView() {
+function initGame() {
   canvas = document.getElementById('gameCanvas');
   ctx = canvas.getContext('2d');
-  canvas.onclick = onFieldTap;
-  drawScene();
+  canvas.onclick = onTap;
   if (!gameState) newGame();
+  else draw();
 }
-
-function onFieldTap() {
-  if (!gameState || !getCurrentBatter()) return;
-  if (!gameState.pitching) {
-    startPitch();
-  } else {
-    resolveSwing(true);
-  }
-}
-
-function drawPixelPlayer(x, y, facing, armAngle, isPitcher) {
-  // body
-  ctx.fillStyle = isPitcher ? '#4a6fa5' : '#c84a46';
-  ctx.fillRect(x - 6, y - 14, 12, 16);
-  // head
-  ctx.fillStyle = '#f4c28a';
-  ctx.fillRect(x - 5, y - 22, 10, 10);
-  // cap
-  ctx.fillStyle = isPitcher ? '#2a5aa0' : '#d44a46';
-  ctx.fillRect(x - 6, y - 24, 12, 4);
-  // arm / bat or pitch
-  ctx.strokeStyle = '#333';
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(x + (facing > 0 ? 6 : -6), y - 8);
-  if (isPitcher) {
-    const armX = x + Math.cos(armAngle) * 12;
-    const armY = y - 10 + Math.sin(armAngle) * 10;
-    ctx.lineTo(armX, armY);
-  } else {
-    // bat
-    const batX = x + Math.cos(armAngle) * 18;
-    const batY = y - 6 + Math.sin(armAngle) * 8;
-    ctx.lineTo(batX, batY);
-    ctx.stroke();
-    ctx.strokeStyle = '#8b4513';
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.moveTo(batX, batY);
-    ctx.lineTo(batX + Math.cos(armAngle) * 8, batY + Math.sin(armAngle) * 4);
-  }
-  ctx.stroke();
-}
-
-function drawScene() {
-  if (!ctx) return;
-  const w = canvas.width, h = canvas.height;
-  // field
-  ctx.fillStyle = '#2d5a3a';
-  ctx.fillRect(0, 0, w, h);
-  ctx.fillStyle = '#266b40';
-  for (let y = 0; y < h; y += 16) ctx.fillRect(0, y, w, 8);
-  // dirt
-  ctx.fillStyle = '#8b6914';
-  ctx.beginPath();
-  ctx.moveTo(w/2, h - 20);
-  ctx.lineTo(w/2 - 130, h/2 + 30);
-  ctx.lineTo(w/2, 70);
-  ctx.lineTo(w/2 + 130, h/2 + 30);
-  ctx.closePath();
-  ctx.fill();
-  // bases
-  ctx.fillStyle = '#fff';
-  [[w/2, h-40], [w/2-100, h/2+20], [w/2, 100], [w/2+100, h/2+20]].forEach(([x,y]) => {
-    ctx.fillRect(x-8, y-8, 16, 16);
-  });
-  // mound
-  ctx.fillStyle = '#a67c52';
-  ctx.beginPath();
-  ctx.arc(w/2, h/2 + 15, 16, 0, Math.PI*2);
-  ctx.fill();
-  // home plate
-  ctx.strokeStyle = '#fff';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(w/2-28, h-75, 56, 32);
-
-  // Pitcher on mound
-  const pitchArm = anim.pitcherArm * Math.PI * 1.5 - 0.5;
-  drawPixelPlayer(w/2, h/2 + 5, 1, pitchArm, true);
-
-  // Batter at home
-  const swingAngle = -0.8 + anim.batterSwing * 2.2;
-  drawPixelPlayer(w/2 + 18, h - 55, -1, swingAngle, false);
-
-  // Ball
-  if (anim.ball) {
-    ctx.fillStyle = '#fff';
-    ctx.beginPath();
-    ctx.arc(anim.ball.x, anim.ball.y, 6, 0, Math.PI*2);
-    ctx.fill();
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-  }
-  if (anim.hitBall) {
-    ctx.fillStyle = '#ff0';
-    ctx.beginPath();
-    ctx.arc(anim.hitBall.x, anim.hitBall.y, 5, 0, Math.PI*2);
-    ctx.fill();
-  }
-
-  // Crowd
-  ctx.fillStyle = '#1a3a28';
-  ctx.fillRect(0, 0, w, 36);
-  for (let i = 0; i < 60; i++) {
-    ctx.fillStyle = ['#e44','#4ae','#fe4','#fff','#a4e'][i%5];
-    ctx.fillRect((i * 11) % w, 4 + (i % 4) * 7, 3, 3);
-  }
-}
-
 function newGame() {
-  const teamOvr = parseInt(document.getElementById('teamOvr')?.textContent) || 55;
-  gameState = {
-    inning: 1, outs: 0, balls: 0, strikes: 0,
-    runs: 0, oppRuns: 0, bases: [false, false, false],
-    batterIndex: 0, pitching: false, stamina: 100
-  };
-  anim = { pitcherArm: 0, batterSwing: 0, ball: null, hitBall: null };
-  log('New game! Tap the field to pitch, then tap again to swing.');
-  updateGameUI();
-  drawScene();
-  document.getElementById('tapHint').textContent = 'TAP FIELD TO PITCH';
+  gameState = { inning:1, outs:0, balls:0, strikes:0, runs:0, oppRuns:0, bases:[false,false,false], batterIndex:0, pitching:false, stamina:100 };
+  anim = { arm:0, swing:0, ball:null, hit:null, phase:'idle' };
+  if (animId) cancelAnimationFrame(animId);
+  log('New game! Tap the field to pitch.');
+  updateUI();
+  draw();
 }
-
-function getCurrentBatter() {
-  const starters = state.lineup.filter(i => i !== null && state.roster[i]).map(i => state.roster[i]);
-  if (!starters.length) return null;
-  return starters[gameState.batterIndex % starters.length];
+function getBatter() {
+  const starters = state.lineup.filter(i=>i!=null && state.roster[i]).map(i=>state.roster[i]);
+  return starters.length ? starters[gameState.batterIndex % starters.length] : null;
 }
-function getPitcher() {
-  return state.pitcherIdx !== null && state.roster[state.pitcherIdx] ? state.roster[state.pitcherIdx] : null;
-}
-
-function updateGameUI() {
+function getPitcher() { return state.pitcherIdx!=null && state.roster[state.pitcherIdx] ? state.roster[state.pitcherIdx] : null; }
+function updateUI() {
   if (!gameState) return;
   document.getElementById('inning').textContent = gameState.inning;
   document.getElementById('outs').textContent = gameState.outs;
   document.getElementById('count').textContent = gameState.balls + '-' + gameState.strikes;
   document.getElementById('runs').textContent = gameState.runs;
   document.getElementById('oppRuns').textContent = gameState.oppRuns;
-  document.getElementById('stamina').textContent = Math.round(gameState.stamina);
-  const batter = getCurrentBatter();
-  const pitcher = getPitcher();
-  document.getElementById('batterPanel').innerHTML = batter
-    ? `${batter.emoji} <b>${batter.name}</b> (${batter.rating} ${batter.tier})<br>
-       <div class="bar"><div class="bar-fill" style="width:${batter.contact}%"></div></div> CON ${batter.contact}
-       <div class="bar"><div class="bar-fill" style="width:${batter.power}%"></div></div> POW ${batter.power}
-       <div class="bar"><div class="bar-fill" style="width:${batter.speed}%"></div></div> SPD ${batter.speed}`
-    : 'No lineup set!';
-  document.getElementById('pitcherPanel').innerHTML = pitcher
-    ? `P: ${pitcher.name} (${pitcher.rating})<br>
-       <div class="bar"><div class="bar-fill" style="width:${gameState.stamina}%;background:${gameState.stamina>40?'#4caf50':'#f44336'}"></div></div>
-       Stamina ${Math.round(gameState.stamina)}`
-    : 'No pitcher set';
-  document.getElementById('advanceBtn').disabled = gameState.pitching;
-  document.getElementById('tapHint').textContent = gameState.pitching ? 'TAP TO SWING!' : 'TAP FIELD TO PITCH';
+  const b = getBatter(), p = getPitcher();
+  document.getElementById('batterPanel').innerHTML = b ? `${b.emoji} <b>${b.name}</b> (${b.rating} ${b.tier})<br>CON ${b.contact} · POW ${b.power} · SPD ${b.speed}` : 'No lineup';
+  document.getElementById('pitcherPanel').innerHTML = p ? `P: ${p.name} (${p.rating})<br>Stamina ${Math.round(gameState.stamina)}` : 'No pitcher';
+  document.getElementById('tapHint').textContent = gameState.pitching ? 'TAP TO SWING' : 'TAP TO PITCH';
 }
+function log(msg) { const el = document.getElementById('gameLog'); el.innerHTML += '<div>' + msg + '</div>'; el.scrollTop = el.scrollHeight; }
 
-function log(msg) {
-  const el = document.getElementById('gameLog');
-  el.innerHTML += `<div>${msg}</div>`;
-  el.scrollTop = el.scrollHeight;
+function onTap() {
+  if (!gameState || !getBatter()) return toast('Set a lineup first');
+  if (anim.phase === 'idle') startPitch();
+  else if (anim.phase === 'pitching') resolve(true);
 }
-
 function startPitch() {
-  if (gameState.pitching || !getCurrentBatter()) return;
+  if (anim.phase !== 'idle') return;
+  anim.phase = 'pitching';
   gameState.pitching = true;
-  gameState.stamina = Math.max(0, gameState.stamina - (0.8 + Math.random()*0.6));
-  updateGameUI();
+  gameState.stamina = Math.max(0, gameState.stamina - 1.2);
+  anim.arm = 0;
+  anim.ball = { x: 300, y: 210, vy: 3.5 };
+  anim.swing = 0;
+  updateUI();
   log('Pitch!');
-  anim.pitcherArm = 0;
-  anim.ball = { x: canvas.width/2, y: canvas.height/2 + 5, vx: 0, vy: 3.2 };
-  anim.batterSwing = 0;
-  animatePitch();
+  animate();
 }
-
-function animatePitch() {
-  if (!gameState || !gameState.pitching) return;
-  anim.pitcherArm = Math.min(1, anim.pitcherArm + 0.08);
-  if (anim.ball) {
-    anim.ball.y += anim.ball.vy;
-    anim.ball.vy += 0.15;
-  }
-  drawScene();
-  if (anim.ball && anim.ball.y < canvas.height - 70) {
-    requestAnimationFrame(animatePitch);
-  } else if (gameState.pitching) {
-    // auto take if no swing
-    setTimeout(() => { if (gameState && gameState.pitching) resolveSwing(false); }, 180);
-  }
-}
-
-function resolveSwing(swung) {
-  if (!gameState || !gameState.pitching) return;
-  gameState.pitching = false;
-  const batter = getCurrentBatter();
-  if (!batter) return;
-
-  if (swung) {
-    anim.batterSwing = 0;
-    let swingStep = 0;
-    function swingAnim() {
-      swingStep++;
-      anim.batterSwing = Math.min(1, swingStep * 0.12);
-      drawScene();
-      if (swingStep < 10) requestAnimationFrame(swingAnim);
+function animate() {
+  if (anim.phase === 'pitching') {
+    anim.arm = Math.min(1, anim.arm + 0.06);
+    if (anim.ball) { anim.ball.y += anim.ball.vy; anim.ball.vy += 0.12; }
+    draw();
+    if (anim.ball && anim.ball.y < 340) {
+      animId = requestAnimationFrame(animate);
+    } else if (anim.phase === 'pitching') {
+      setTimeout(() => { if (anim.phase === 'pitching') resolve(false); }, 150);
     }
+  }
+}
+function resolve(swung) {
+  if (anim.phase !== 'pitching') return;
+  anim.phase = 'resolving';
+  gameState.pitching = false;
+  const batter = getBatter();
+  if (!batter) { anim.phase = 'idle'; return; }
+  if (swung) {
+    anim.swing = 0;
+    let s = 0;
+    const swingAnim = () => { s++; anim.swing = Math.min(1, s*0.15); draw(); if (s < 8) requestAnimationFrame(swingAnim); };
     swingAnim();
   }
-
-  const inZone = Math.random() < 0.62;
+  const inZone = Math.random() < 0.65;
   if (!swung) {
     if (!inZone) {
-      gameState.balls++;
-      log('Ball!');
-      if (gameState.balls >= 4) { log('Walk!'); advanceRunners(1); nextBatter(); }
+      gameState.balls++; log('Ball!');
+      if (gameState.balls >= 4) { log('Walk!'); advance(1); nextBatter(); }
     } else {
-      gameState.strikes++;
-      log('Called strike!');
+      gameState.strikes++; log('Strike!');
       if (gameState.strikes >= 3) { log('Strikeout!'); gameState.outs++; nextBatter(); }
     }
   } else {
-    const timingLuck = Math.random() < 0.55 ? 0.18 : 0;
-    const hitChance = (batter.contact / 100) * (inZone ? 0.70 : 0.30) + timingLuck;
-    if (Math.random() < hitChance) {
-      const hitRoll = Math.random() + (batter.power / 100) * 0.35;
+    const chance = (batter.contact/100) * (inZone ? 0.75 : 0.35) + (Math.random()<0.5?0.15:0);
+    if (Math.random() < chance) {
+      const roll = Math.random() + batter.power/300;
       let bases = 1, msg = 'Single!';
-      if (hitRoll > 0.90) { bases = 4; msg = 'HOME RUN!!!'; }
-      else if (hitRoll > 0.75) { bases = 3; msg = 'Triple!'; }
-      else if (hitRoll > 0.52) { bases = 2; msg = 'Double!'; }
+      if (roll > 0.88) { bases = 4; msg = 'HOME RUN!'; }
+      else if (roll > 0.72) { bases = 3; msg = 'Triple!'; }
+      else if (roll > 0.5) { bases = 2; msg = 'Double!'; }
       log(msg);
-      // hit ball animation
-      anim.hitBall = { x: canvas.width/2, y: canvas.height - 60, vx: (Math.random()-0.5)*4, vy: -6 - Math.random()*4 };
-      let hitFrames = 0;
-      function hitAnim() {
-        if (!anim.hitBall) return;
-        anim.hitBall.x += anim.hitBall.vx;
-        anim.hitBall.y += anim.hitBall.vy;
-        anim.hitBall.vy += 0.25;
-        hitFrames++;
-        drawScene();
-        if (hitFrames < 40 && anim.hitBall.y < canvas.height) requestAnimationFrame(hitAnim);
-        else anim.hitBall = null;
-      }
+      anim.hit = { x: 300, y: 340, vx: (Math.random()-0.5)*5, vy: -7 };
+      let f = 0;
+      const hitAnim = () => {
+        if (!anim.hit) return;
+        anim.hit.x += anim.hit.vx; anim.hit.y += anim.hit.vy; anim.hit.vy += 0.3;
+        f++; draw();
+        if (f < 35 && anim.hit.y < 420) requestAnimationFrame(hitAnim); else anim.hit = null;
+      };
       hitAnim();
-      advanceRunners(bases);
-      nextBatter();
+      advance(bases); nextBatter();
     } else {
-      gameState.strikes++;
-      log('Swing and a miss!');
+      gameState.strikes++; log('Miss!');
       if (gameState.strikes >= 3) { log('Strikeout!'); gameState.outs++; nextBatter(); }
     }
   }
   anim.ball = null;
   checkInning();
-  updateGameUI();
-  setTimeout(drawScene, 100);
-  save();
+  updateUI();
+  setTimeout(() => { anim.phase = 'idle'; draw(); }, 200);
 }
-
-function advanceRunners(bases) {
+function advance(bases) {
   for (let i = 0; i < bases; i++) {
     if (gameState.bases[2]) { gameState.runs++; log('Run scores!'); }
     gameState.bases[2] = gameState.bases[1];
     gameState.bases[1] = gameState.bases[0];
     gameState.bases[0] = true;
   }
-  if (bases >= 4) {
-    gameState.runs += gameState.bases.filter(Boolean).length + 1;
-    gameState.bases = [false, false, false];
-    log('All runners score!');
-  }
+  if (bases >= 4) { gameState.runs += gameState.bases.filter(Boolean).length + 1; gameState.bases = [false,false,false]; log('All score!'); }
 }
-function nextBatter() {
-  gameState.batterIndex++;
-  gameState.balls = 0;
-  gameState.strikes = 0;
-}
+function nextBatter() { gameState.batterIndex++; gameState.balls = 0; gameState.strikes = 0; }
 function checkInning() {
   if (gameState.outs >= 3) {
-    gameState.outs = 0;
-    gameState.inning++;
-    gameState.bases = [false, false, false];
-    const teamOvr = parseInt(document.getElementById('teamOvr')?.textContent) || 55;
-    const pitcher = getPitcher();
-    const pitchFactor = pitcher ? (pitcher.rating / 100) * (gameState.stamina / 100) : 0.5;
-    const oppScoreChance = 0.35 - (teamOvr - 50) * 0.004 - pitchFactor * 0.15;
-    let oppScored = 0;
-    if (Math.random() < oppScoreChance) oppScored = Math.floor(Math.random() * 3) + (Math.random() < 0.2 ? 2 : 0);
-    gameState.oppRuns += oppScored;
-    if (oppScored) log(`Opponent scores ${oppScored}!`);
-    log(`End of inning. ${gameState.runs}-${gameState.oppRuns}`);
+    gameState.outs = 0; gameState.inning++; gameState.bases = [false,false,false];
+    const ovr = parseInt(document.getElementById('teamOvr').textContent) || 55;
+    const p = getPitcher();
+    const chance = 0.32 - (ovr-50)*0.003 - (p ? p.rating/400 : 0);
+    let scored = Math.random() < chance ? Math.floor(Math.random()*3)+1 : 0;
+    gameState.oppRuns += scored;
+    if (scored) log('Opponent scores ' + scored);
+    log('End of inning. ' + gameState.runs + '-' + gameState.oppRuns);
     if (gameState.inning > 5) endGame();
   }
 }
 function endGame() {
   const win = gameState.runs > gameState.oppRuns;
-  const reward = win ? 120 + gameState.runs * 12 : 30;
+  const reward = win ? 100 + gameState.runs * 10 : 25;
   state.coins += reward;
   state.lineup.forEach(idx => {
-    if (idx !== null && state.roster[idx]) {
-      state.roster[idx].xp += win ? 25 : 12;
+    if (idx != null && state.roster[idx]) {
+      state.roster[idx].xp += win ? 20 : 10;
       if (state.roster[idx].xp >= 100) {
-        state.roster[idx].xp -= 100;
-        state.roster[idx].level++;
+        state.roster[idx].xp -= 100; state.roster[idx].level++;
         state.roster[idx].rating = Math.min(99, state.roster[idx].rating + 1);
-        state.roster[idx].contact = Math.min(99, state.roster[idx].contact + 1);
-        state.roster[idx].power = Math.min(99, state.roster[idx].power + 1);
         toast(state.roster[idx].name + ' leveled up!');
       }
     }
   });
-  const next = state.season.schedule.find(g => !g.played);
-  if (next) {
-    next.played = true;
-    next.result = win ? 'W' : 'L';
-    if (win) state.season.wins++; else state.season.losses++;
-    state.season.gamesPlayed++;
-  }
-  state.morale = Math.min(100, Math.max(40, state.morale + (win ? 4 : -2)));
-  updateCoins();
-  log(win ? `YOU WIN! +$${reward}` : `You lost. +$${reward}`);
-  toast(win ? 'Victory!' : 'Better luck next time');
-  gameState = null;
-  save();
-  renderHub();
+  const next = state.season.schedule.find(g=>!g.played);
+  if (next) { next.played = true; next.result = win ? 'W' : 'L'; if (win) state.season.wins++; else state.season.losses++; }
+  log(win ? 'YOU WIN! +$' + reward : 'Lost. +$' + reward);
+  toast(win ? 'Victory!' : 'Try again');
+  gameState = null; anim.phase = 'idle';
+  save(); renderAll();
 }
-
 document.getElementById('advanceBtn').onclick = () => {
-  if (gameState && gameState.bases.some(Boolean) && !gameState.pitching) {
-    if (gameState.bases[2]) { gameState.runs++; log('Runner scores!'); }
-    gameState.bases[2] = gameState.bases[1];
-    gameState.bases[1] = gameState.bases[0];
-    gameState.bases[0] = false;
-    updateGameUI();
-    drawScene();
-  }
+  if (!gameState || anim.phase !== 'idle') return;
+  if (gameState.bases[2]) { gameState.runs++; log('Run scores!'); }
+  gameState.bases[2] = gameState.bases[1];
+  gameState.bases[1] = gameState.bases[0];
+  gameState.bases[0] = false;
+  updateUI(); draw();
 };
 document.getElementById('newGameBtn').onclick = newGame;
-
 function startNextGame() {
-  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
   document.querySelector('[data-view="game"]').classList.add('active');
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('game').classList.add('active');
-  initGameView();
-  newGame();
+  initGame(); newGame();
 }
 
-load();
-renderHub();
-renderRoster();
-renderLineup();
-renderFreeAgents();
-renderSeason();
-updateCoins();
+function drawPixel(x, y, color, arm, isP) {
+  ctx.fillStyle = isP ? '#3a6ea5' : '#c84a46';
+  ctx.fillRect(x-6, y-16, 12, 18);
+  ctx.fillStyle = '#f4c28a';
+  ctx.fillRect(x-5, y-26, 10, 10);
+  ctx.fillStyle = isP ? '#2a5aa0' : '#a33';
+  ctx.fillRect(x-6, y-28, 12, 4);
+  ctx.strokeStyle = isP ? '#333' : '#8b4513';
+  ctx.lineWidth = isP ? 3 : 4;
+  ctx.beginPath();
+  ctx.moveTo(x + (isP?6:-6), y-10);
+  const ang = isP ? (arm * Math.PI - 0.8) : (-1 + arm * 2.4);
+  ctx.lineTo(x + Math.cos(ang)*14, y-8 + Math.sin(ang)*10);
+  ctx.stroke();
+}
+function draw() {
+  if (!ctx) return;
+  const w = 600, h = 420;
+  ctx.fillStyle = '#2d5a3a'; ctx.fillRect(0,0,w,h);
+  ctx.fillStyle = '#266b40'; for (let y=0;y<h;y+=14) ctx.fillRect(0,y,w,7);
+  ctx.fillStyle = '#8b6914';
+  ctx.beginPath(); ctx.moveTo(300,400); ctx.lineTo(170,240); ctx.lineTo(300,90); ctx.lineTo(430,240); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#fff';
+  [[300,380],[200,250],[300,120],[400,250]].forEach(([x,y])=>ctx.fillRect(x-7,y-7,14,14));
+  ctx.fillStyle = '#a67c52'; ctx.beginPath(); ctx.arc(300,230,15,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.strokeRect(272,350,56,30);
+  // runners
+  if (gameState) {
+    if (gameState.bases[0]) drawPixel(200, 250, '#fff', 0, false);
+    if (gameState.bases[1]) drawPixel(300, 120, '#fff', 0, false);
+    if (gameState.bases[2]) drawPixel(400, 250, '#fff', 0, false);
+  }
+  drawPixel(300, 220, '#fff', anim.arm, true);
+  drawPixel(318, 360, '#fff', anim.swing, false);
+  if (anim.ball) { ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(anim.ball.x, anim.ball.y, 6, 0, Math.PI*2); ctx.fill(); ctx.strokeStyle='#000'; ctx.stroke(); }
+  if (anim.hit) { ctx.fillStyle='#ff0'; ctx.beginPath(); ctx.arc(anim.hit.x, anim.hit.y, 5, 0, Math.PI*2); ctx.fill(); }
+  ctx.fillStyle = '#1a3a28'; ctx.fillRect(0,0,w,32);
+  for (let i=0;i<50;i++) { ctx.fillStyle=['#e44','#4ae','#fe4','#fff'][i%4]; ctx.fillRect((i*12)%w, 6+(i%3)*6, 3,3); }
+}
+
+load(); renderAll();
 </script>
 </body>
 </html>
