@@ -105,16 +105,14 @@ button:active { transform: translateY(2px); }
 </div>
 <div class="field-wrap" id="fieldWrap">
   <canvas id="c" width="640" height="440"></canvas>
-  <div class="next-pitch" id="nextPitch">NEXT: WHITE (Normal)</div>
-  <div class="tap-hint" id="hint">TAP TO PITCH</div>
+  <div class="next-pitch" id="nextPitch">NEXT: WHITE (Fastball)</div>
+  <div class="tap-hint" id="hint">TAP / SPACE TO PITCH</div>
 </div>
-<div class="info">Tap the field to pitch, then tap again to swing. Watch the pitcher color!</div>
+<div class="info">Tap the field or press SPACE to pitch, then tap or SPACE again to swing. Only balls over the fence are home runs.</div>
 <div class="pitch-legend">
-  <div class="legend-item"><div class="swatch" style="background:#eee;"></div> White: Normal</div>
+  <div class="legend-item"><div class="swatch" style="background:#eee;"></div> White: Fastball</div>
   <div class="legend-item"><div class="swatch" style="background:#e33;"></div> Red: SUPER FAST</div>
-  <div class="legend-item"><div class="swatch" style="background:#39f;"></div> Blue: Loop ball</div>
   <div class="legend-item"><div class="swatch" style="background:#fc0;"></div> Yellow: Slider</div>
-  <div class="legend-item"><div class="swatch" style="background:linear-gradient(90deg,#f33,#ff3,#3f3,#39f);"></div> Rainbow: ANYTHING</div>
 </div>
 <button onclick="resetGame()">RESET</button>
 
@@ -131,27 +129,27 @@ let nextPitchType = 'white';
 let anim = { arm: 0, swing: 0, ball: null, hit: null };
 let animId = null;
 
+// Realistic pitches only
 const PITCHES = {
-  white:  { name: 'Normal',     color: '#eeeeee', speed: 1.0, curve: 0,   loop: 0 },
-  red:    { name: 'SUPER FAST', color: '#ee3333', speed: 1.9, curve: 0,   loop: 0 },
-  blue:   { name: 'Loop ball',  color: '#3399ff', speed: 0.7, curve: 0,   loop: 1 },
-  yellow: { name: 'Slider',     color: '#ffcc00', speed: 1.15, curve: 1.6, loop: 0 },
-  rainbow:{ name: 'ANYTHING',   color: 'rainbow', speed: 1.35, curve: 0.9, loop: 0.6 }
+  white:  { name: 'Fastball',    color: '#eeeeee', speed: 1.0,  curve: 0,   drop: 0.15 },
+  red:    { name: 'SUPER FAST',  color: '#ee3333', speed: 1.65, curve: 0,   drop: 0.08 },
+  yellow: { name: 'Slider',      color: '#ffcc00', speed: 1.05, curve: 1.8, drop: 0.25 }
 };
+
+// Fence distances (left / center / right)
+const FENCE = { left: 350, center: 400, right: 360 };
 
 function pickPitch() {
   const r = Math.random();
-  if (r < 0.35) return 'white';
-  if (r < 0.55) return 'red';
-  if (r < 0.75) return 'blue';
-  if (r < 0.90) return 'yellow';
-  return 'rainbow';
+  if (r < 0.45) return 'white';
+  if (r < 0.75) return 'red';
+  return 'yellow';
 }
 
 function updateNextPitchDisplay() {
   const p = PITCHES[nextPitchType];
   nextPitchEl.textContent = 'NEXT: ' + nextPitchType.toUpperCase() + ' (' + p.name + ')';
-  nextPitchEl.style.borderColor = nextPitchType === 'rainbow' ? '#f3f' : p.color;
+  nextPitchEl.style.borderColor = p.color;
 }
 
 function updateScore() {
@@ -167,17 +165,7 @@ function updateScore() {
 }
 
 function drawPixel(x, y, color, arm, isPitcher) {
-  if (isPitcher && color === 'rainbow') {
-    const grd = ctx.createLinearGradient(x-8, y-20, x+8, y+10);
-    grd.addColorStop(0, '#f33');
-    grd.addColorStop(0.25, '#f93');
-    grd.addColorStop(0.5, '#ff3');
-    grd.addColorStop(0.75, '#3f3');
-    grd.addColorStop(1, '#39f');
-    ctx.fillStyle = grd;
-  } else {
-    ctx.fillStyle = isPitcher ? color : '#c84a46';
-  }
+  ctx.fillStyle = isPitcher ? color : '#c84a46';
   ctx.fillRect(x - 7, y - 18, 14, 20);
   ctx.fillStyle = '#f4c28a';
   ctx.fillRect(x - 6, y - 28, 12, 11);
@@ -201,72 +189,70 @@ function draw() {
   ctx.fillStyle = '#266b40';
   for (let y = 0; y < h; y += 14) ctx.fillRect(0, y, w, 7);
 
-  // FENCE (outfield wall)
+  // FENCE with realistic distances
   ctx.fillStyle = '#3a2a1a';
-  ctx.fillRect(40, 48, w - 80, 18);
+  ctx.fillRect(30, 42, w - 60, 22);
   ctx.fillStyle = '#5a3a22';
-  ctx.fillRect(40, 48, w - 80, 6);
-  // fence posts
+  ctx.fillRect(30, 42, w - 60, 7);
   ctx.fillStyle = '#222';
-  for (let x = 50; x < w - 40; x += 28) {
-    ctx.fillRect(x, 48, 3, 22);
+  for (let x = 40; x < w - 30; x += 26) {
+    ctx.fillRect(x, 42, 3, 26);
   }
-  // fence height markers
   ctx.fillStyle = '#fff';
-  ctx.font = '10px Courier New';
+  ctx.font = 'bold 11px Courier New';
   ctx.textAlign = 'center';
-  ctx.fillText('350', w/2 - 140, 62);
-  ctx.fillText('400', w/2, 62);
-  ctx.fillText('450', w/2 + 140, 62);
+  ctx.fillText('350', w/2 - 160, 58);
+  ctx.fillText('400', w/2, 58);
+  ctx.fillText('360', w/2 + 160, 58);
 
-  // dirt
+  // dirt infield
   ctx.fillStyle = '#8b6914';
   ctx.beginPath();
-  ctx.moveTo(w/2, h - 10);
-  ctx.lineTo(w/2 - 150, h/2 + 50);
-  ctx.lineTo(w/2, 90);
-  ctx.lineTo(w/2 + 150, h/2 + 50);
+  ctx.moveTo(w/2, h - 8);
+  ctx.lineTo(w/2 - 155, h/2 + 55);
+  ctx.lineTo(w/2, 95);
+  ctx.lineTo(w/2 + 155, h/2 + 55);
   ctx.closePath();
   ctx.fill();
 
   // bases
   ctx.fillStyle = '#fff';
-  [[w/2, h-40], [w/2-120, h/2+30], [w/2, 120], [w/2+120, h/2+30]].forEach(([x,y]) => {
+  [[w/2, h-38], [w/2-125, h/2+35], [w/2, 125], [w/2+125, h/2+35]].forEach(([x,y]) => {
     ctx.fillRect(x-8, y-8, 16, 16);
   });
 
   // mound
   ctx.fillStyle = '#a67c52';
   ctx.beginPath();
-  ctx.arc(w/2, h/2 + 30, 18, 0, Math.PI*2);
+  ctx.arc(w/2, h/2 + 35, 18, 0, Math.PI*2);
   ctx.fill();
 
   // home plate
   ctx.strokeStyle = '#fff';
   ctx.lineWidth = 3;
-  ctx.strokeRect(w/2-30, h-85, 60, 36);
+  ctx.strokeRect(w/2-32, h-90, 64, 38);
 
-  // pitcher (uses NEXT pitch color so you see it before pitching)
+  // pitcher (shows NEXT pitch color)
   const pColor = PITCHES[nextPitchType].color;
-  drawPixel(w/2, h/2 + 18, pColor, anim.arm, true);
+  drawPixel(w/2, h/2 + 22, pColor, anim.arm, true);
 
   // batter
-  drawPixel(w/2 + 24, h - 65, '#c84a46', anim.swing, false);
+  drawPixel(w/2 + 26, h - 70, '#c84a46', anim.swing, false);
 
-  // ball
+  // ball in flight
   if (anim.ball) {
     ctx.fillStyle = '#fff';
     ctx.beginPath();
-    ctx.arc(anim.ball.x, anim.ball.y, 7, 0, Math.PI*2);
+    ctx.arc(anim.ball.x, anim.ball.y, 6, 0, Math.PI*2);
     ctx.fill();
     ctx.strokeStyle = '#000';
     ctx.lineWidth = 1;
     ctx.stroke();
   }
   if (anim.hit) {
-    ctx.fillStyle = '#ff0';
+    ctx.fillStyle = '#ffee55';
     ctx.beginPath();
-    ctx.arc(anim.hit.x, anim.hit.y, 6, 0, Math.PI*2);
+    ctx.arc(anim.hit.x, anim.hit.y, 5, 0, Math.PI*2);
     ctx.fill();
     ctx.strokeStyle = '#000';
     ctx.stroke();
@@ -274,19 +260,25 @@ function draw() {
 
   // crowd
   ctx.fillStyle = '#1a3a28';
-  ctx.fillRect(0, 0, w, 40);
-  for (let i = 0; i < 80; i++) {
+  ctx.fillRect(0, 0, w, 36);
+  for (let i = 0; i < 90; i++) {
     ctx.fillStyle = ['#e44','#4ae','#fe4','#fff','#a4e'][i%5];
-    ctx.fillRect((i * 8) % w, 8 + (i % 4) * 7, 3, 3);
+    ctx.fillRect((i * 7) % w, 8 + (i % 4) * 6, 3, 3);
   }
 }
 
-function onTap() {
+function onAction() {
   if (phase === 'idle') startPitch();
   else if (phase === 'pitching') swing();
 }
 
-canvas.onclick = onTap;
+canvas.onclick = onAction;
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space') {
+    e.preventDefault();
+    onAction();
+  }
+});
 
 function startPitch() {
   if (phase !== 'idle') return;
@@ -298,39 +290,34 @@ function startPitch() {
   anim.swing = 0;
   anim.ball = {
     x: canvas.width / 2,
-    y: canvas.height / 2 + 18,
-    speed: 3.0 * p.speed,
+    y: canvas.height / 2 + 22,
+    speed: 2.8 * p.speed,
     curve: p.curve,
-    loop: p.loop,
+    drop: p.drop,
     t: 0,
     type: currentType
   };
   anim.hit = null;
-  hint.textContent = 'TAP TO SWING!';
+  hint.textContent = 'TAP / SPACE TO SWING';
   updateScore();
   animate();
 }
 
 function animate() {
   if (phase !== 'pitching') return;
-  anim.arm = Math.min(1, anim.arm + 0.07);
+  anim.arm = Math.min(1, anim.arm + 0.06);
   if (anim.ball) {
     const b = anim.ball;
     b.t += 1;
     b.y += b.speed;
-    b.speed += 0.07;
-    if (b.curve) b.x += Math.sin(b.t * 0.14) * b.curve * 1.7;
-    if (b.loop) b.y += Math.sin(b.t * 0.22) * b.loop * 5.5;
-    if (b.type === 'rainbow') {
-      b.x += (Math.random() - 0.5) * 4.5;
-      b.speed += (Math.random() - 0.5) * 0.45;
-    }
+    b.speed += b.drop * 0.12;
+    if (b.curve) b.x += Math.sin(b.t * 0.12) * b.curve * 1.4;
   }
   draw();
-  if (anim.ball && anim.ball.y < canvas.height - 75) {
+  if (anim.ball && anim.ball.y < canvas.height - 80) {
     animId = requestAnimationFrame(animate);
   } else if (phase === 'pitching') {
-    setTimeout(() => { if (phase === 'pitching') resolve(false); }, 100);
+    setTimeout(() => { if (phase === 'pitching') resolve(false); }, 80);
   }
 }
 
@@ -344,61 +331,74 @@ function resolve(swung) {
   phase = 'resolving';
   if (animId) cancelAnimationFrame(animId);
 
-  const ballY = anim.ball ? anim.ball.y : 0;
-  const sweetSpot = 300; // ideal y for perfect timing
+  const ball = anim.ball;
+  const ballY = ball ? ball.y : 0;
+  // Sweet spot around 310-340 for good contact
+  const sweetSpot = 325;
   const timingError = Math.abs(ballY - sweetSpot);
-  const timingQuality = Math.max(0, 1 - timingError / 120); // 0 to 1
+  const timingQuality = Math.max(0, 1 - timingError / 90);
 
   if (swung) {
     anim.swing = 0;
     let s = 0;
     const doSwing = () => {
       s++;
-      anim.swing = Math.min(1, s * 0.18);
+      anim.swing = Math.min(1, s * 0.16);
       draw();
-      if (s < 7) requestAnimationFrame(doSwing);
+      if (s < 8) requestAnimationFrame(doSwing);
     };
     doSwing();
   }
 
-  const currentType = anim.ball ? anim.ball.type : nextPitchType;
-  const inZone = Math.random() < (currentType === 'rainbow' ? 0.48 : 0.66);
+  const inZone = ball && Math.abs(ball.x - canvas.width/2) < 45 && ballY > 250 && ballY < 380;
 
   if (!swung) {
     streak = 0;
-  } else if (inZone && timingQuality > 0.15) {
-    // Calculate distance based on timing
-    const baseDist = 320 + timingQuality * 180; // 320 to 500
-    const dist = Math.round(baseDist + (Math.random() - 0.4) * 30);
-    const isHR = dist >= 380 || timingQuality > 0.75;
+  } else if (inZone && timingQuality > 0.2) {
+    // Realistic exit velocity based on timing
+    const exitVelo = 85 + timingQuality * 45; // 85-130 mph-ish
+    // Direction based on contact point
+    const pull = (ball.x - canvas.width/2) / 40;
+    const launchAngle = 18 + timingQuality * 16 + (Math.random()-0.5)*6;
+
+    // Calculate estimated distance
+    const dist = Math.round(exitVelo * 2.8 + launchAngle * 1.6 + (Math.random()-0.5)*25);
+    const clampedDist = Math.max(280, Math.min(480, dist));
+
+    // Determine if it clears the fence based on direction
+    let fenceDist = FENCE.center;
+    if (pull < -0.4) fenceDist = FENCE.left;
+    else if (pull > 0.4) fenceDist = FENCE.right;
+
+    const isHR = clampedDist >= fenceDist;
 
     if (isHR) {
       hrs++;
       streak++;
-      lastDist = dist;
-      logMsg('HOME RUN! ' + dist + ' ft');
+      lastDist = clampedDist;
+      logMsg('HOME RUN! ' + clampedDist + ' ft');
     } else {
       streak = 0;
       lastDist = 0;
-      logMsg(dist > 340 ? 'Deep fly (' + dist + ' ft)' : 'Contact');
+      logMsg(clampedDist > 320 ? 'Deep fly (' + clampedDist + ' ft)' : 'In play');
     }
 
-    // fly ball animation
+    // Fly ball animation
     anim.hit = {
-      x: canvas.width / 2,
-      y: canvas.height - 65,
-      vx: (Math.random() - 0.5) * 5,
-      vy: -7 - timingQuality * 5
+      x: canvas.width / 2 + pull * 20,
+      y: canvas.height - 70,
+      vx: pull * 3.5,
+      vy: -6.5 - timingQuality * 4.5
     };
     let f = 0;
     const fly = () => {
       if (!anim.hit) return;
       anim.hit.x += anim.hit.vx;
       anim.hit.y += anim.hit.vy;
-      anim.hit.vy += 0.26;
+      anim.hit.vy += 0.24;
       f++;
       draw();
-      if (f < 55 && anim.hit.y < canvas.height + 30) requestAnimationFrame(fly);
+      if (f < 60 && anim.hit.y < canvas.height + 40) requestAnimationFrame(fly);
       else anim.hit = null;
     };
     fly();
@@ -407,7 +407,7 @@ function resolve(swung) {
     logMsg('Swing and a miss!');
   }
 
-  // CHANGE PITCHER COLOR FOR NEXT PITCH NOW
+  // Change to next pitch NOW (before next pitch)
   nextPitchType = pickPitch();
   updateNextPitchDisplay();
 
@@ -415,15 +415,15 @@ function resolve(swung) {
   updateScore();
   setTimeout(() => {
     phase = 'idle';
-    hint.textContent = 'TAP TO PITCH';
+    hint.textContent = 'TAP / SPACE TO PITCH';
     draw();
-  }, 700);
+  }, 650);
 }
 
 function logMsg(msg) {
   const old = hint.textContent;
   hint.textContent = msg;
-  setTimeout(() => { if (phase !== 'idle') hint.textContent = old; }, 900);
+  setTimeout(() => { if (phase !== 'idle') hint.textContent = old; }, 1000);
 }
 
 function resetGame() {
@@ -437,7 +437,7 @@ function resetGame() {
   if (animId) cancelAnimationFrame(animId);
   updateNextPitchDisplay();
   updateScore();
-  hint.textContent = 'TAP TO PITCH';
+  hint.textContent = 'TAP / SPACE TO PITCH';
   draw();
 }
 
