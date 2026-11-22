@@ -98,9 +98,9 @@ button:active { transform: translateY(2px); }
 <h1>RETROBALL DERBY</h1>
 <div class="scoreboard">
   <div>HOME RUNS<br><b id="hrs">0</b></div>
-  <div>PITCHES<br><b id="pitches">0</b></div>
+  <div>OUTS<br><b id="outs">0</b></div>
+  <div>COINS<br><b id="coins">0</b></div>
   <div>BEST<br><b id="best">0</b></div>
-  <div>STREAK<br><b id="streak">0</b></div>
   <div>LAST HR<br><b id="lastDist">--</b></div>
 </div>
 <div class="field-wrap" id="fieldWrap">
@@ -114,7 +114,8 @@ button:active { transform: translateY(2px); }
   <div class="legend-item"><div class="swatch" style="background:#e33;"></div> Red: SUPER FAST</div>
   <div class="legend-item"><div class="swatch" style="background:#fc0;"></div> Yellow: Slider</div>
 </div>
-<button onclick="resetGame()">RESET</button>
+<button onclick="resetGame()">NEW ROUND</button>
+<button onclick="openShop()" style="background:#2a5aa0;color:white;">SHOP</button>
 
 <script>
 const canvas = document.getElementById('c');
@@ -122,7 +123,8 @@ const ctx = canvas.getContext('2d');
 const hint = document.getElementById('hint');
 const nextPitchEl = document.getElementById('nextPitch');
 
-let hrs = 0, pitches = 0, best = parseInt(localStorage.getItem('retroball-best')||0), streak = 0;
+let hrs = 0, pitches = 0, best = parseInt(localStorage.getItem('retroball-best')||0), outs = 0;
+let coins = parseInt(localStorage.getItem('retroball-coins')||0);
 let lastDist = 0;
 let phase = 'idle';
 let nextPitchType = 'white';
@@ -154,14 +156,15 @@ function updateNextPitchDisplay() {
 
 function updateScore() {
   document.getElementById('hrs').textContent = hrs;
-  document.getElementById('pitches').textContent = pitches;
+  document.getElementById('outs').textContent = outs;
+  document.getElementById('coins').textContent = coins;
   document.getElementById('best').textContent = best;
-  document.getElementById('streak').textContent = streak;
   document.getElementById('lastDist').textContent = lastDist ? lastDist + ' ft' : '--';
   if (hrs > best) {
     best = hrs;
     localStorage.setItem('retroball-best', best);
   }
+  localStorage.setItem('retroball-coins', coins);
 }
 
 function drawPixel(x, y, color, arm, isPitcher) {
@@ -369,7 +372,8 @@ function resolve(swung) {
   const timingQuality = Math.max(0, 1 - timingError / 110);
 
   if (!swung) {
-    streak = 0;
+    outs++;
+    logMsg('Out!');
   } else if (inZone && timingQuality > 0.2) {
     // Easier exit velocity and distance
     const exitVelo = 95 + timingQuality * 50; // higher base
@@ -388,37 +392,60 @@ function resolve(swung) {
 
     if (isHR) {
       hrs++;
-      streak++;
       lastDist = clampedDist;
-      logMsg('HOME RUN! ' + clampedDist + ' ft');
+      const coinReward = Math.floor(clampedDist / 10) + 15;
+      coins += coinReward;
+      logMsg('HOME RUN! ' + clampedDist + ' ft (+' + coinReward + ' coins)');
+      // Ball flies over the fence
+      anim.hit = {
+        x: canvas.width / 2 + pull * 20,
+        y: canvas.height - 70,
+        vx: pull * 2.5,
+        vy: -9 - timingQuality * 3,
+        overFence: true
+      };
     } else {
-      streak = 0;
+      outs++;
       lastDist = 0;
-      logMsg(clampedDist > 320 ? 'Deep fly (' + clampedDist + ' ft)' : 'In play');
+      logMsg('Out! (' + clampedDist + ' ft)');
+      anim.hit = {
+        x: canvas.width / 2 + pull * 20,
+        y: canvas.height - 70,
+        vx: pull * 3,
+        vy: -4.5 - timingQuality * 2,
+        overFence: false
+      };
     }
 
     // Fly ball animation
-    anim.hit = {
-      x: canvas.width / 2 + pull * 20,
-      y: canvas.height - 70,
-      vx: pull * 3.5,
-      vy: -6.5 - timingQuality * 4.5
-    };
     let f = 0;
     const fly = () => {
       if (!anim.hit) return;
       anim.hit.x += anim.hit.vx;
       anim.hit.y += anim.hit.vy;
-      anim.hit.vy += 0.24;
+      anim.hit.vy += 0.22;
       f++;
       draw();
-      if (f < 60 && anim.hit.y < canvas.height + 40) requestAnimationFrame(fly);
+      // If HR, let it go past the fence
+      const fenceY = 55;
+      if (anim.hit.overFence && anim.hit.y < fenceY && f > 10) {
+        anim.hit.vy *= 0.6;
+      }
+      if (f < 70 && anim.hit.y < canvas.height + 50) requestAnimationFrame(fly);
       else anim.hit = null;
     };
     fly();
   } else {
-    streak = 0;
-    logMsg('Swing and a miss!');
+    outs++;
+    logMsg('Out!');
+  }
+
+  // Check for 3 outs
+  if (outs >= 3) {
+    setTimeout(() => {
+      alert('3 outs! Round over. You hit ' + hrs + ' home runs.');
+      resetRound();
+    }, 800);
   }
 
   // Change to next pitch NOW (before next pitch)
@@ -440,10 +467,10 @@ function logMsg(msg) {
   setTimeout(() => { if (phase !== 'idle') hint.textContent = old; }, 1000);
 }
 
-function resetGame() {
+function resetRound() {
   hrs = 0;
   pitches = 0;
-  streak = 0;
+  outs = 0;
   lastDist = 0;
   phase = 'idle';
   nextPitchType = pickPitch();
@@ -453,6 +480,14 @@ function resetGame() {
   updateScore();
   hint.textContent = 'TAP / SPACE TO PITCH';
   draw();
+}
+
+function resetGame() {
+  resetRound();
+}
+
+function openShop() {
+  alert('SHOP\\n\\nComing Soon!\\n\\nNew hitters will be available here.');
 }
 
 // init
