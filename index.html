@@ -136,8 +136,8 @@ const PITCHES = {
   yellow: { name: 'Slider',      color: '#ffcc00', speed: 1.05, curve: 1.8, drop: 0.25 }
 };
 
-// Fence distances (left / center / right)
-const FENCE = { left: 350, center: 400, right: 360 };
+// Easier fence distances
+const FENCE = { left: 320, center: 360, right: 330 };
 
 function pickPitch() {
   const r = Math.random();
@@ -189,21 +189,37 @@ function draw() {
   ctx.fillStyle = '#266b40';
   for (let y = 0; y < h; y += 14) ctx.fillRect(0, y, w, 7);
 
-  // FENCE with realistic distances
+  // CURVY FENCE
   ctx.fillStyle = '#3a2a1a';
-  ctx.fillRect(30, 42, w - 60, 22);
+  ctx.beginPath();
+  ctx.moveTo(20, 70);
+  ctx.quadraticCurveTo(w/2, 28, w - 20, 70);
+  ctx.lineTo(w - 20, 92);
+  ctx.quadraticCurveTo(w/2, 50, 20, 92);
+  ctx.closePath();
+  ctx.fill();
   ctx.fillStyle = '#5a3a22';
-  ctx.fillRect(30, 42, w - 60, 7);
+  ctx.beginPath();
+  ctx.moveTo(20, 70);
+  ctx.quadraticCurveTo(w/2, 28, w - 20, 70);
+  ctx.lineTo(w - 20, 78);
+  ctx.quadraticCurveTo(w/2, 36, 20, 78);
+  ctx.closePath();
+  ctx.fill();
+  // fence posts along the curve
   ctx.fillStyle = '#222';
-  for (let x = 40; x < w - 30; x += 26) {
-    ctx.fillRect(x, 42, 3, 26);
+  for (let i = 0; i <= 18; i++) {
+    const t = i / 18;
+    const x = 20 + t * (w - 40);
+    const y = 70 + (t - 0.5) * (t - 0.5) * 80 - 20;
+    ctx.fillRect(x - 1.5, y, 3, 24);
   }
   ctx.fillStyle = '#fff';
   ctx.font = 'bold 11px Courier New';
   ctx.textAlign = 'center';
-  ctx.fillText('350', w/2 - 160, 58);
-  ctx.fillText('400', w/2, 58);
-  ctx.fillText('360', w/2 + 160, 58);
+  ctx.fillText('320', w/2 - 150, 62);
+  ctx.fillText('360', w/2, 48);
+  ctx.fillText('330', w/2 + 150, 62);
 
   // dirt infield
   ctx.fillStyle = '#8b6914';
@@ -336,7 +352,6 @@ function resolve(swung) {
   // Sweet spot around 310-340 for good contact
   const sweetSpot = 325;
   const timingError = Math.abs(ballY - sweetSpot);
-  const timingQuality = Math.max(0, 1 - timingError / 90);
 
   if (swung) {
     anim.swing = 0;
@@ -350,25 +365,24 @@ function resolve(swung) {
     doSwing();
   }
 
-  const inZone = ball && Math.abs(ball.x - canvas.width/2) < 45 && ballY > 250 && ballY < 380;
+  const inZone = ball && Math.abs(ball.x - canvas.width/2) < 60 && ballY > 230 && ballY < 400;
+  const timingQuality = Math.max(0, 1 - timingError / 110);
 
   if (!swung) {
     streak = 0;
   } else if (inZone && timingQuality > 0.2) {
-    // Realistic exit velocity based on timing
-    const exitVelo = 85 + timingQuality * 45; // 85-130 mph-ish
-    // Direction based on contact point
+    // Easier exit velocity and distance
+    const exitVelo = 95 + timingQuality * 50; // higher base
     const pull = (ball.x - canvas.width/2) / 40;
-    const launchAngle = 18 + timingQuality * 16 + (Math.random()-0.5)*6;
+    const launchAngle = 22 + timingQuality * 14 + (Math.random()-0.5)*5;
 
-    // Calculate estimated distance
-    const dist = Math.round(exitVelo * 2.8 + launchAngle * 1.6 + (Math.random()-0.5)*25);
-    const clampedDist = Math.max(280, Math.min(480, dist));
+    const dist = Math.round(exitVelo * 3.1 + launchAngle * 1.8 + (Math.random()-0.5)*20);
+    const clampedDist = Math.max(300, Math.min(500, dist));
 
-    // Determine if it clears the fence based on direction
+    // Determine fence based on direction
     let fenceDist = FENCE.center;
-    if (pull < -0.4) fenceDist = FENCE.left;
-    else if (pull > 0.4) fenceDist = FENCE.right;
+    if (pull < -0.35) fenceDist = FENCE.left;
+    else if (pull > 0.35) fenceDist = FENCE.right;
 
     const isHR = clampedDist >= fenceDist;
 
