@@ -138,8 +138,8 @@ const PITCHES = {
   yellow: { name: 'Slider',      color: '#ffcc00', speed: 1.05, curve: 1.8, drop: 0.25 }
 };
 
-// Easier fence distances
-const FENCE = { left: 320, center: 360, right: 330 };
+// Harder fence distances
+const FENCE = { left: 370, center: 410, right: 380 };
 
 function pickPitch() {
   const r = Math.random();
@@ -220,9 +220,9 @@ function draw() {
   ctx.fillStyle = '#fff';
   ctx.font = 'bold 11px Courier New';
   ctx.textAlign = 'center';
-  ctx.fillText('320', w/2 - 150, 62);
-  ctx.fillText('360', w/2, 48);
-  ctx.fillText('330', w/2 + 150, 62);
+  ctx.fillText('370', w/2 - 150, 62);
+  ctx.fillText('410', w/2, 48);
+  ctx.fillText('380', w/2 + 150, 62);
 
   // dirt infield
   ctx.fillStyle = '#8b6914';
@@ -368,20 +368,20 @@ function resolve(swung) {
     doSwing();
   }
 
-  const inZone = ball && Math.abs(ball.x - canvas.width/2) < 60 && ballY > 230 && ballY < 400;
-  const timingQuality = Math.max(0, 1 - timingError / 110);
+  const inZone = ball && Math.abs(ball.x - canvas.width/2) < 38 && ballY > 280 && ballY < 360;
+  const timingQuality = Math.max(0, 1 - timingError / 55);
 
   if (!swung) {
     outs++;
     logMsg('Out!');
-  } else if (inZone && timingQuality > 0.2) {
-    // Easier exit velocity and distance
-    const exitVelo = 95 + timingQuality * 50; // higher base
+  } else if (inZone && timingQuality > 0.45) {
+    // Harder exit velocity
+    const exitVelo = 82 + timingQuality * 38;
     const pull = (ball.x - canvas.width/2) / 40;
-    const launchAngle = 22 + timingQuality * 14 + (Math.random()-0.5)*5;
+    const launchAngle = 16 + timingQuality * 12 + (Math.random()-0.5)*4;
 
-    const dist = Math.round(exitVelo * 3.1 + launchAngle * 1.8 + (Math.random()-0.5)*20);
-    const clampedDist = Math.max(300, Math.min(500, dist));
+    const dist = Math.round(exitVelo * 2.6 + launchAngle * 1.4 + (Math.random()-0.5)*18);
+    const clampedDist = Math.max(280, Math.min(460, dist));
 
     // Determine fence based on direction
     let fenceDist = FENCE.center;
