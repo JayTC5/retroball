@@ -13,11 +13,6 @@
   --dark-green: #0d3d26;
   --red: #d44a46;
   --blue: #2a5aa0;
-  --black-tier: #222;
-  --bronze: #cd7f32;
-  --silver: #c0c0c0;
-  --gold-tier: #ffd700;
-  --diamond: #4fc3f7;
   --dirt: #8b6914;
   --grass: #2d5a3a;
 }
@@ -79,8 +74,6 @@ main { padding: 12px; }
   background: var(--ink); color: white; padding: 6px 10px;
   font-weight: bold; text-transform: uppercase; font-size: 13px;
 }
-
-/* Hub */
 .hub-stats {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 10px; padding: 12px;
@@ -94,8 +87,6 @@ main { padding: 12px; }
   color: var(--ink); font-size: 20px; font-weight: bold; border: 4px solid var(--ink);
   text-transform: uppercase;
 }
-
-/* Roster / Free Agents */
 .roster-grid, .fa-grid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 10px; padding: 10px;
@@ -121,8 +112,6 @@ main { padding: 12px; }
 .xp-fill { height: 100%; background: var(--green); width: 0%; }
 .stats-mini { display: grid; grid-template-columns: 1fr 1fr 1fr; font-size: 9px; gap: 1px; }
 .stats-mini b { display: block; font-size: 11px; }
-
-/* Lineup - easier */
 .lineup-slots { display: grid; gap: 6px; padding: 8px; }
 .line-slot {
   display: flex; justify-content: space-between; align-items: center;
@@ -131,17 +120,13 @@ main { padding: 12px; }
 }
 .line-slot.starter { background: #e8f5e9; border-color: #4caf50; }
 .line-slot.pitcher { background: #fff3e0; border-color: #ff9800; }
-.slot-controls { display: flex; gap: 4px; }
-.slot-controls button { padding: 4px 8px; font-size: 11px; background: #2a5aa0; color: white; border: 2px solid #000; }
 .quick-actions { padding: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
 .quick-actions button { padding: 8px 12px; background: var(--green); color: white; border: 2px solid #000; font-weight: bold; }
-
-/* Game */
 .game-layout { display: grid; grid-template-columns: 1fr 300px; gap: 12px; }
 @media (max-width: 800px) { .game-layout { grid-template-columns: 1fr; } }
 .field-wrap {
   position: relative; background: var(--grass); border: 4px solid var(--ink);
-  height: 380px; overflow: hidden;
+  height: 400px; overflow: hidden; cursor: pointer;
 }
 canvas#gameCanvas { width: 100%; height: 100%; display: block; }
 .scoreboard {
@@ -158,16 +143,19 @@ canvas#gameCanvas { width: 100%; height: 100%; display: block; }
 .bar-fill { height: 100%; background: var(--gold); }
 .game-controls { padding: 8px; }
 .game-controls button {
-  width: 100%; margin: 4px 0; padding: 14px; background: var(--gold); color: var(--ink);
-  font-weight: bold; font-size: 16px; border: 3px solid var(--ink);
+  width: 100%; margin: 4px 0; padding: 12px; background: var(--gold); color: var(--ink);
+  font-weight: bold; font-size: 15px; border: 3px solid var(--ink);
 }
 .game-controls button:disabled { opacity: 0.4; cursor: not-allowed; }
 #gameLog {
-  height: 140px; overflow-y: auto; border: 3px solid var(--ink);
+  height: 120px; overflow-y: auto; border: 3px solid var(--ink);
   background: #fffdf5; padding: 6px; font-size: 11px; margin-top: 6px;
 }
-
-/* Toast */
+.tap-hint {
+  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,0.7); color: white; padding: 6px 12px; font-size: 13px;
+  border: 2px solid var(--gold); pointer-events: none;
+}
 .toast {
   position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%) translateY(120px);
   background: var(--ink); color: white; border: 3px solid var(--gold);
@@ -194,7 +182,6 @@ canvas#gameCanvas { width: 100%; height: 100%; display: block; }
     <button data-view="game">Play</button>
   </nav>
   <main>
-    <!-- HUB -->
     <section id="hub" class="view active">
       <div class="panel">
         <div class="panel-title">Franchise Hub</div>
@@ -213,7 +200,6 @@ canvas#gameCanvas { width: 100%; height: 100%; display: block; }
       </div>
     </section>
 
-    <!-- ROSTER -->
     <section id="roster" class="view">
       <div class="panel">
         <div class="panel-title">My Roster <span id="rosterCount"></span></div>
@@ -222,7 +208,6 @@ canvas#gameCanvas { width: 100%; height: 100%; display: block; }
       </div>
     </section>
 
-    <!-- LINEUP - EASIER -->
     <section id="lineup" class="view">
       <div class="panel">
         <div class="panel-title">Lineup & Rotation (OVR: <span id="teamOvr">--</span>)</div>
@@ -235,7 +220,6 @@ canvas#gameCanvas { width: 100%; height: 100%; display: block; }
       </div>
     </section>
 
-    <!-- FREE AGENTS -->
     <section id="freeagents" class="view">
       <div class="panel">
         <div class="panel-title">Free Agents</div>
@@ -246,7 +230,6 @@ canvas#gameCanvas { width: 100%; height: 100%; display: block; }
       </div>
     </section>
 
-    <!-- SEASON -->
     <section id="season" class="view">
       <div class="panel">
         <div class="panel-title">Season Schedule & Standings</div>
@@ -254,7 +237,6 @@ canvas#gameCanvas { width: 100%; height: 100%; display: block; }
       </div>
     </section>
 
-    <!-- GAME -->
     <section id="game" class="view">
       <div class="game-layout">
         <div>
@@ -266,8 +248,9 @@ canvas#gameCanvas { width: 100%; height: 100%; display: block; }
             <div>OPP<br><b id="oppRuns">0</b></div>
             <div>STA<br><b id="stamina">100</b></div>
           </div>
-          <div class="field-wrap">
-            <canvas id="gameCanvas" width="640" height="380"></canvas>
+          <div class="field-wrap" id="fieldWrap">
+            <canvas id="gameCanvas" width="640" height="400"></canvas>
+            <div class="tap-hint" id="tapHint">TAP FIELD TO PITCH</div>
           </div>
         </div>
         <div class="panel">
@@ -275,12 +258,10 @@ canvas#gameCanvas { width: 100%; height: 100%; display: block; }
           <div class="batter-panel" id="batterPanel">Waiting for lineup...</div>
           <div class="pitcher-panel" id="pitcherPanel">Pitcher stamina loading...</div>
           <div class="game-controls">
-            <button id="pitchBtn">TAP TO PITCH</button>
-            <button id="swingBtn" disabled>TAP TO SWING!</button>
             <button id="advanceBtn" disabled>ADVANCE RUNNERS</button>
             <button id="newGameBtn" style="background:#3266a8;color:white;">NEW GAME</button>
           </div>
-          <div id="gameLog">Set your lineup and play from Hub or here. Tap Pitch, then Tap Swing.</div>
+          <div id="gameLog">Tap the field to pitch, then tap again to swing!</div>
         </div>
       </div>
     </section>
@@ -293,7 +274,6 @@ const NAMES = ['Ace Walker','Billy Bunts','Carlos Vega','Duke Davis','Eddie Flas
 const EMOJIS = ['🏃','🧢','🤾','🧔','👨‍🦰','👱','🧑','👩‍🦰','👨‍🦱','👧'];
 const POSITIONS = ['P','C','1B','2B','3B','SS','LF','CF','RF'];
 const OPP_TEAMS = ['Aces','Bombers','Cyclones','Dragons','Eagles','Falcons','Giants','Hawks','Indians','Jays'];
-const TIERS = ['black', 'bronze', 'silver', 'gold', 'diamond'];
 const TIER_BASE = { black: 38, bronze: 48, silver: 60, gold: 72, diamond: 85 };
 
 let state = {
@@ -330,14 +310,9 @@ function load() {
 }
 function save() {
   localStorage.setItem('retroball', JSON.stringify({
-    coins: state.coins,
-    roster: state.roster,
-    lineup: state.lineup,
-    pitcherIdx: state.pitcherIdx,
-    season: state.season,
-    stadium: state.stadium,
-    morale: state.morale,
-    freeAgents: state.freeAgents
+    coins: state.coins, roster: state.roster, lineup: state.lineup,
+    pitcherIdx: state.pitcherIdx, season: state.season, stadium: state.stadium,
+    morale: state.morale, freeAgents: state.freeAgents
   }));
 }
 
@@ -357,15 +332,12 @@ function makePlayer(forcedTier) {
   return {
     id: Date.now() + Math.random(),
     name: NAMES[Math.floor(Math.random() * NAMES.length)],
-    tier,
-    rating,
-    pos,
+    tier, rating, pos,
     emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
     power: Math.min(99, rating - Math.floor(Math.random() * 12)),
     contact: Math.min(99, rating - Math.floor(Math.random() * 10)),
     speed: Math.min(99, rating - Math.floor(Math.random() * 14)),
-    xp: 0,
-    level: 1,
+    xp: 0, level: 1,
     salary: Math.floor(rating * 1.5) * 10
   };
 }
@@ -375,8 +347,7 @@ function generateSchedule() {
   for (let i = 0; i < 12; i++) {
     state.season.schedule.push({
       opp: OPP_TEAMS[Math.floor(Math.random() * OPP_TEAMS.length)],
-      played: false,
-      result: null
+      played: false, result: null
     });
   }
 }
@@ -395,7 +366,7 @@ function refreshFreeAgents(free = false) {
 
 function renderHub() {
   document.getElementById('record').textContent = state.season.wins + '-' + state.season.losses;
-  const starters = state.lineup.filter(i => i !== null).map(i => state.roster[i]);
+  const starters = state.lineup.filter(i => i !== null && state.roster[i]).map(i => state.roster[i]);
   const avg = starters.length ? Math.round(starters.reduce((a, p) => a + p.rating, 0) / starters.length) : 0;
   document.getElementById('hubOvr').textContent = avg || '--';
   document.getElementById('stadiumLvl').textContent = state.stadium;
@@ -407,7 +378,7 @@ function renderHub() {
 function renderRoster() {
   const grid = document.getElementById('players');
   grid.innerHTML = state.roster.map((p, i) => `
-    <div class="player-card ${p.tier}" data-idx="${i}" onclick="selectForLineup(${i})">
+    <div class="player-card ${p.tier}" onclick="selectForLineup(${i})">
       <div class="portrait">${p.emoji}</div>
       <div class="player-name">${p.name}</div>
       <div class="rating">${p.rating}</div>
@@ -418,8 +389,8 @@ function renderRoster() {
         <span>CON<b>${p.contact}</b></span>
         <span>SPD<b>${p.speed}</b></span>
       </div>
-      <div style="font-size:10px;margin-top:2px;">${p.pos} · ${p.tier.toUpperCase()} · $${p.salary}</div>
-      <button style="margin-top:4px;padding:3px;font-size:10px;background:#c84a46;color:white;width:100%;" onclick="event.stopPropagation();sellPlayer(${i})">CUT $${Math.floor(p.rating)}</button>
+      <div style="font-size:10px;margin-top:2px;">${p.pos} · ${p.tier.toUpperCase()}</div>
+      <button style="margin-top:4px;padding:3px;font-size:10px;background:#c84a46;color:white;width:100%;" onclick="event.stopPropagation();sellPlayer(${i})">CUT</button>
     </div>
   `).join('');
   document.getElementById('rosterCount').textContent = `(${state.roster.length})`;
@@ -438,7 +409,7 @@ function renderFreeAgents() {
         <span>CON<b>${p.contact}</b></span>
         <span>SPD<b>${p.speed}</b></span>
       </div>
-      <div style="font-size:10px;">${p.pos} · ${p.tier.toUpperCase()} · Ask $${p.salary * 3}</div>
+      <div style="font-size:10px;">${p.pos} · ${p.tier.toUpperCase()} · $${p.salary * 3}</div>
       <button style="margin-top:4px;padding:4px;font-size:11px;background:var(--green);color:white;width:100%;" onclick="signFreeAgent(${i})">SIGN</button>
     </div>
   `).join('');
@@ -451,7 +422,7 @@ function renderLineup() {
     return `
       <div class="line-slot ${p ? 'starter' : ''}" onclick="assignToSlot(${slot})">
         <b>${POSITIONS[slot] || 'BAT' + (slot+1)}</b>
-        <span>${p ? p.name + ' (' + p.rating + ' ' + p.tier + ')' : 'Empty — select player then click'}</span>
+        <span>${p ? p.name + ' (' + p.rating + ' ' + p.tier + ')' : 'Empty'}</span>
         <span>${p ? p.emoji : '—'}</span>
       </div>
     `;
@@ -460,7 +431,7 @@ function renderLineup() {
   html += `
     <div class="line-slot pitcher" onclick="assignPitcher()">
       <b>PITCHER</b>
-      <span>${pitcher ? pitcher.name + ' (' + pitcher.rating + ')' : 'Select a player then click here'}</span>
+      <span>${pitcher ? pitcher.name + ' (' + pitcher.rating + ')' : 'Empty'}</span>
       <span>${pitcher ? pitcher.emoji : '—'}</span>
     </div>
   `;
@@ -487,12 +458,10 @@ function updateTeamOvr() {
 let selectedPlayerIdx = null;
 function selectForLineup(idx) {
   selectedPlayerIdx = idx;
-  toast('Selected ' + state.roster[idx].name + ' — now click a lineup slot or the pitcher slot');
+  toast('Selected ' + state.roster[idx].name + ' — click a slot');
 }
-
 function assignToSlot(slot) {
-  if (selectedPlayerIdx === null) { toast('First click a player in the Roster tab'); return; }
-  if (!state.roster[selectedPlayerIdx]) return;
+  if (selectedPlayerIdx === null) { toast('First select a player in Roster'); return; }
   state.lineup = state.lineup.map(i => i === selectedPlayerIdx ? null : i);
   state.lineup[slot] = selectedPlayerIdx;
   selectedPlayerIdx = null;
@@ -500,31 +469,24 @@ function assignToSlot(slot) {
   save();
   toast('Lineup updated!');
 }
-
 function assignPitcher() {
-  if (selectedPlayerIdx === null) { toast('First click a player in the Roster tab'); return; }
+  if (selectedPlayerIdx === null) { toast('First select a player in Roster'); return; }
   state.pitcherIdx = selectedPlayerIdx;
   selectedPlayerIdx = null;
   renderLineup();
   save();
   toast('Pitcher set!');
 }
-
 function autoFillBest() {
   const sorted = [...state.roster].map((p, i) => ({p, i})).sort((a, b) => b.p.rating - a.p.rating);
   state.lineup = sorted.slice(0, 9).map(x => x.i);
   while (state.lineup.length < 9) state.lineup.push(null);
   const pitchers = state.roster.map((p, i) => ({p, i})).filter(x => x.p.pos === 'P');
-  if (pitchers.length) {
-    state.pitcherIdx = pitchers.sort((a,b) => b.p.rating - a.p.rating)[0].i;
-  } else if (sorted.length) {
-    state.pitcherIdx = sorted[0].i;
-  }
+  state.pitcherIdx = pitchers.length ? pitchers.sort((a,b) => b.p.rating - a.p.rating)[0].i : (sorted[0]?.i ?? null);
   renderLineup();
   save();
-  toast('Auto-filled best lineup + pitcher!');
+  toast('Auto-filled best lineup!');
 }
-
 function clearLineup() {
   state.lineup = Array(9).fill(null);
   state.pitcherIdx = null;
@@ -532,7 +494,6 @@ function clearLineup() {
   save();
   toast('Lineup cleared');
 }
-
 function sellPlayer(idx) {
   const p = state.roster[idx];
   if (!confirm(`Cut ${p.name}?`)) return;
@@ -541,13 +502,9 @@ function sellPlayer(idx) {
   if (state.pitcherIdx === idx) state.pitcherIdx = null;
   else if (state.pitcherIdx > idx) state.pitcherIdx--;
   state.roster.splice(idx, 1);
-  save();
-  updateCoins();
-  renderRoster();
-  renderLineup();
+  save(); updateCoins(); renderRoster(); renderLineup();
   toast('Player released');
 }
-
 function signFreeAgent(idx) {
   const p = state.freeAgents[idx];
   const cost = p.salary * 3;
@@ -555,28 +512,20 @@ function signFreeAgent(idx) {
   state.coins -= cost;
   state.roster.push(p);
   state.freeAgents.splice(idx, 1);
-  save();
-  updateCoins();
-  renderFreeAgents();
-  renderRoster();
+  save(); updateCoins(); renderFreeAgents(); renderRoster();
   toast(`Signed ${p.name}!`);
 }
-
 function upgradeStadium() {
   if (state.coins < 800) { toast('Not enough coins!'); return; }
   state.coins -= 800;
   state.stadium++;
   state.morale = Math.min(100, state.morale + 8);
-  updateCoins();
-  renderHub();
-  save();
-  toast('Stadium upgraded! Morale up.');
+  updateCoins(); renderHub(); save();
+  toast('Stadium upgraded!');
 }
-
 function updateCoins() {
   document.getElementById('coins').textContent = state.coins;
 }
-
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -584,7 +533,6 @@ function toast(msg) {
   setTimeout(() => t.classList.remove('show'), 2000);
 }
 
-// Navigation
 document.querySelectorAll('nav button').forEach(btn => {
   btn.onclick = () => {
     document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
@@ -600,68 +548,145 @@ document.querySelectorAll('nav button').forEach(btn => {
   };
 });
 
-// ========== GAME ==========
+// ========== GAME WITH ANIMATIONS ==========
 let canvas, ctx;
 let gameState = null;
+let anim = {
+  pitcherArm: 0,      // 0-1 pitch windup
+  batterSwing: 0,     // 0-1 swing
+  ball: null,         // {x, y, vx, vy, hit}
+  hitBall: null
+};
 
 function initGameView() {
   canvas = document.getElementById('gameCanvas');
   ctx = canvas.getContext('2d');
-  drawField();
+  canvas.onclick = onFieldTap;
+  drawScene();
   if (!gameState) newGame();
 }
 
-function drawField() {
+function onFieldTap() {
+  if (!gameState || !getCurrentBatter()) return;
+  if (!gameState.pitching) {
+    startPitch();
+  } else {
+    resolveSwing(true);
+  }
+}
+
+function drawPixelPlayer(x, y, facing, armAngle, isPitcher) {
+  // body
+  ctx.fillStyle = isPitcher ? '#4a6fa5' : '#c84a46';
+  ctx.fillRect(x - 6, y - 14, 12, 16);
+  // head
+  ctx.fillStyle = '#f4c28a';
+  ctx.fillRect(x - 5, y - 22, 10, 10);
+  // cap
+  ctx.fillStyle = isPitcher ? '#2a5aa0' : '#d44a46';
+  ctx.fillRect(x - 6, y - 24, 12, 4);
+  // arm / bat or pitch
+  ctx.strokeStyle = '#333';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(x + (facing > 0 ? 6 : -6), y - 8);
+  if (isPitcher) {
+    const armX = x + Math.cos(armAngle) * 12;
+    const armY = y - 10 + Math.sin(armAngle) * 10;
+    ctx.lineTo(armX, armY);
+  } else {
+    // bat
+    const batX = x + Math.cos(armAngle) * 18;
+    const batY = y - 6 + Math.sin(armAngle) * 8;
+    ctx.lineTo(batX, batY);
+    ctx.stroke();
+    ctx.strokeStyle = '#8b4513';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(batX, batY);
+    ctx.lineTo(batX + Math.cos(armAngle) * 8, batY + Math.sin(armAngle) * 4);
+  }
+  ctx.stroke();
+}
+
+function drawScene() {
   if (!ctx) return;
   const w = canvas.width, h = canvas.height;
+  // field
   ctx.fillStyle = '#2d5a3a';
   ctx.fillRect(0, 0, w, h);
   ctx.fillStyle = '#266b40';
   for (let y = 0; y < h; y += 16) ctx.fillRect(0, y, w, 8);
+  // dirt
   ctx.fillStyle = '#8b6914';
   ctx.beginPath();
-  ctx.moveTo(w/2, h - 30);
-  ctx.lineTo(w/2 - 120, h/2 + 20);
-  ctx.lineTo(w/2, 80);
-  ctx.lineTo(w/2 + 120, h/2 + 20);
+  ctx.moveTo(w/2, h - 20);
+  ctx.lineTo(w/2 - 130, h/2 + 30);
+  ctx.lineTo(w/2, 70);
+  ctx.lineTo(w/2 + 130, h/2 + 30);
   ctx.closePath();
   ctx.fill();
+  // bases
   ctx.fillStyle = '#fff';
-  [[w/2, h-50], [w/2-90, h/2+10], [w/2, 110], [w/2+90, h/2+10]].forEach(([x,y]) => {
+  [[w/2, h-40], [w/2-100, h/2+20], [w/2, 100], [w/2+100, h/2+20]].forEach(([x,y]) => {
     ctx.fillRect(x-8, y-8, 16, 16);
   });
+  // mound
   ctx.fillStyle = '#a67c52';
   ctx.beginPath();
-  ctx.arc(w/2, h/2 + 10, 14, 0, Math.PI*2);
+  ctx.arc(w/2, h/2 + 15, 16, 0, Math.PI*2);
   ctx.fill();
+  // home plate
   ctx.strokeStyle = '#fff';
   ctx.lineWidth = 2;
-  ctx.strokeRect(w/2-25, h-70, 50, 30);
+  ctx.strokeRect(w/2-28, h-75, 56, 32);
+
+  // Pitcher on mound
+  const pitchArm = anim.pitcherArm * Math.PI * 1.5 - 0.5;
+  drawPixelPlayer(w/2, h/2 + 5, 1, pitchArm, true);
+
+  // Batter at home
+  const swingAngle = -0.8 + anim.batterSwing * 2.2;
+  drawPixelPlayer(w/2 + 18, h - 55, -1, swingAngle, false);
+
+  // Ball
+  if (anim.ball) {
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(anim.ball.x, anim.ball.y, 6, 0, Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  if (anim.hitBall) {
+    ctx.fillStyle = '#ff0';
+    ctx.beginPath();
+    ctx.arc(anim.hitBall.x, anim.hitBall.y, 5, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  // Crowd
   ctx.fillStyle = '#1a3a28';
-  ctx.fillRect(0, 0, w, 40);
-  for (let i = 0; i < 80; i++) {
+  ctx.fillRect(0, 0, w, 36);
+  for (let i = 0; i < 60; i++) {
     ctx.fillStyle = ['#e44','#4ae','#fe4','#fff','#a4e'][i%5];
-    ctx.fillRect(Math.random()*w, Math.random()*30, 3, 3);
+    ctx.fillRect((i * 11) % w, 4 + (i % 4) * 7, 3, 3);
   }
 }
 
 function newGame() {
   const teamOvr = parseInt(document.getElementById('teamOvr')?.textContent) || 55;
   gameState = {
-    inning: 1,
-    outs: 0,
-    balls: 0,
-    strikes: 0,
-    runs: 0,
-    oppRuns: 0,
-    bases: [false, false, false],
-    batterIndex: 0,
-    pitching: false,
-    stamina: 100
+    inning: 1, outs: 0, balls: 0, strikes: 0,
+    runs: 0, oppRuns: 0, bases: [false, false, false],
+    batterIndex: 0, pitching: false, stamina: 100
   };
-  log('New game! Team OVR ' + teamOvr + '. Tap to Pitch, then Tap to Swing.');
+  anim = { pitcherArm: 0, batterSwing: 0, ball: null, hitBall: null };
+  log('New game! Tap the field to pitch, then tap again to swing.');
   updateGameUI();
-  drawField();
+  drawScene();
+  document.getElementById('tapHint').textContent = 'TAP FIELD TO PITCH';
 }
 
 function getCurrentBatter() {
@@ -669,7 +694,6 @@ function getCurrentBatter() {
   if (!starters.length) return null;
   return starters[gameState.batterIndex % starters.length];
 }
-
 function getPitcher() {
   return state.pitcherIdx !== null && state.roster[state.pitcherIdx] ? state.roster[state.pitcherIdx] : null;
 }
@@ -682,7 +706,6 @@ function updateGameUI() {
   document.getElementById('runs').textContent = gameState.runs;
   document.getElementById('oppRuns').textContent = gameState.oppRuns;
   document.getElementById('stamina').textContent = Math.round(gameState.stamina);
-
   const batter = getCurrentBatter();
   const pitcher = getPitcher();
   document.getElementById('batterPanel').innerHTML = batter
@@ -696,10 +719,8 @@ function updateGameUI() {
        <div class="bar"><div class="bar-fill" style="width:${gameState.stamina}%;background:${gameState.stamina>40?'#4caf50':'#f44336'}"></div></div>
        Stamina ${Math.round(gameState.stamina)}`
     : 'No pitcher set';
-
-  document.getElementById('pitchBtn').disabled = gameState.pitching || !batter;
-  document.getElementById('swingBtn').disabled = !gameState.pitching;
   document.getElementById('advanceBtn').disabled = gameState.pitching;
+  document.getElementById('tapHint').textContent = gameState.pitching ? 'TAP TO SWING!' : 'TAP FIELD TO PITCH';
 }
 
 function log(msg) {
@@ -713,96 +734,94 @@ function startPitch() {
   gameState.pitching = true;
   gameState.stamina = Math.max(0, gameState.stamina - (0.8 + Math.random()*0.6));
   updateGameUI();
-  log('Pitch coming...');
-  // Simple ball animation
-  let y = 180;
-  function frame() {
-    if (!gameState.pitching) return;
-    y += 5;
-    drawField();
-    ctx.fillStyle = '#fff';
-    ctx.beginPath();
-    ctx.arc(canvas.width/2, y, 6, 0, Math.PI*2);
-    ctx.fill();
-    ctx.strokeStyle = '#000';
-    ctx.stroke();
-    if (y < 340) requestAnimationFrame(frame);
-    else if (gameState.pitching) {
-      // Auto-resolve as take if no swing
-      setTimeout(() => { if (gameState.pitching) resolveSwing(false); }, 200);
-    }
-  }
-  frame();
+  log('Pitch!');
+  anim.pitcherArm = 0;
+  anim.ball = { x: canvas.width/2, y: canvas.height/2 + 5, vx: 0, vy: 3.2 };
+  anim.batterSwing = 0;
+  animatePitch();
 }
 
-document.getElementById('pitchBtn').onclick = startPitch;
-document.getElementById('swingBtn').onclick = () => resolveSwing(true);
-document.getElementById('advanceBtn').onclick = () => {
-  if (gameState.bases.some(Boolean)) {
-    if (gameState.bases[2]) { gameState.runs++; log('Runner scores!'); }
-    gameState.bases[2] = gameState.bases[1];
-    gameState.bases[1] = gameState.bases[0];
-    gameState.bases[0] = false;
-    updateGameUI();
-    drawField();
+function animatePitch() {
+  if (!gameState || !gameState.pitching) return;
+  anim.pitcherArm = Math.min(1, anim.pitcherArm + 0.08);
+  if (anim.ball) {
+    anim.ball.y += anim.ball.vy;
+    anim.ball.vy += 0.15;
   }
-};
-document.getElementById('newGameBtn').onclick = newGame;
+  drawScene();
+  if (anim.ball && anim.ball.y < canvas.height - 70) {
+    requestAnimationFrame(animatePitch);
+  } else if (gameState.pitching) {
+    // auto take if no swing
+    setTimeout(() => { if (gameState && gameState.pitching) resolveSwing(false); }, 180);
+  }
+}
 
 function resolveSwing(swung) {
-  if (!gameState.pitching) return;
+  if (!gameState || !gameState.pitching) return;
   gameState.pitching = false;
-
   const batter = getCurrentBatter();
   if (!batter) return;
 
-  const inZone = Math.random() < 0.62;
+  if (swung) {
+    anim.batterSwing = 0;
+    let swingStep = 0;
+    function swingAnim() {
+      swingStep++;
+      anim.batterSwing = Math.min(1, swingStep * 0.12);
+      drawScene();
+      if (swingStep < 10) requestAnimationFrame(swingAnim);
+    }
+    swingAnim();
+  }
 
+  const inZone = Math.random() < 0.62;
   if (!swung) {
     if (!inZone) {
       gameState.balls++;
       log('Ball!');
-      if (gameState.balls >= 4) {
-        log('Walk!');
-        advanceRunners(1);
-        nextBatter();
-      }
+      if (gameState.balls >= 4) { log('Walk!'); advanceRunners(1); nextBatter(); }
     } else {
       gameState.strikes++;
       log('Called strike!');
-      if (gameState.strikes >= 3) {
-        log('Strikeout!');
-        gameState.outs++;
-        nextBatter();
-      }
+      if (gameState.strikes >= 3) { log('Strikeout!'); gameState.outs++; nextBatter(); }
     }
   } else {
-    // Simple tap swing — chance based on contact + some randomness for "timing"
-    const timingLuck = Math.random() < 0.55 ? 0.18 : 0; // light timing feel without bar
+    const timingLuck = Math.random() < 0.55 ? 0.18 : 0;
     const hitChance = (batter.contact / 100) * (inZone ? 0.70 : 0.30) + timingLuck;
     if (Math.random() < hitChance) {
       const hitRoll = Math.random() + (batter.power / 100) * 0.35;
-      let bases = 1;
-      let msg = 'Single!';
+      let bases = 1, msg = 'Single!';
       if (hitRoll > 0.90) { bases = 4; msg = 'HOME RUN!!!'; }
       else if (hitRoll > 0.75) { bases = 3; msg = 'Triple!'; }
       else if (hitRoll > 0.52) { bases = 2; msg = 'Double!'; }
       log(msg);
+      // hit ball animation
+      anim.hitBall = { x: canvas.width/2, y: canvas.height - 60, vx: (Math.random()-0.5)*4, vy: -6 - Math.random()*4 };
+      let hitFrames = 0;
+      function hitAnim() {
+        if (!anim.hitBall) return;
+        anim.hitBall.x += anim.hitBall.vx;
+        anim.hitBall.y += anim.hitBall.vy;
+        anim.hitBall.vy += 0.25;
+        hitFrames++;
+        drawScene();
+        if (hitFrames < 40 && anim.hitBall.y < canvas.height) requestAnimationFrame(hitAnim);
+        else anim.hitBall = null;
+      }
+      hitAnim();
       advanceRunners(bases);
       nextBatter();
     } else {
       gameState.strikes++;
       log('Swing and a miss!');
-      if (gameState.strikes >= 3) {
-        log('Strikeout!');
-        gameState.outs++;
-        nextBatter();
-      }
+      if (gameState.strikes >= 3) { log('Strikeout!'); gameState.outs++; nextBatter(); }
     }
   }
+  anim.ball = null;
   checkInning();
   updateGameUI();
-  drawField();
+  setTimeout(drawScene, 100);
   save();
 }
 
@@ -819,13 +838,11 @@ function advanceRunners(bases) {
     log('All runners score!');
   }
 }
-
 function nextBatter() {
   gameState.batterIndex++;
   gameState.balls = 0;
   gameState.strikes = 0;
 }
-
 function checkInning() {
   if (gameState.outs >= 3) {
     gameState.outs = 0;
@@ -843,7 +860,6 @@ function checkInning() {
     if (gameState.inning > 5) endGame();
   }
 }
-
 function endGame() {
   const win = gameState.runs > gameState.oppRuns;
   const reward = win ? 120 + gameState.runs * 12 : 30;
@@ -870,12 +886,24 @@ function endGame() {
   }
   state.morale = Math.min(100, Math.max(40, state.morale + (win ? 4 : -2)));
   updateCoins();
-  log(win ? `YOU WIN! +$${reward}` : `You lost. +$${reward} consolation`);
+  log(win ? `YOU WIN! +$${reward}` : `You lost. +$${reward}`);
   toast(win ? 'Victory!' : 'Better luck next time');
   gameState = null;
   save();
   renderHub();
 }
+
+document.getElementById('advanceBtn').onclick = () => {
+  if (gameState && gameState.bases.some(Boolean) && !gameState.pitching) {
+    if (gameState.bases[2]) { gameState.runs++; log('Runner scores!'); }
+    gameState.bases[2] = gameState.bases[1];
+    gameState.bases[1] = gameState.bases[0];
+    gameState.bases[0] = false;
+    updateGameUI();
+    drawScene();
+  }
+};
+document.getElementById('newGameBtn').onclick = newGame;
 
 function startNextGame() {
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
@@ -886,7 +914,6 @@ function startNextGame() {
   newGame();
 }
 
-// Init
 load();
 renderHub();
 renderRoster();
