@@ -194,7 +194,7 @@ let animId = null;
 const PITCHES = {
   white:  { name: 'Fastball',   color: '#eeeeee', speed: 1.0,  curve: 0,   drop: 0.15 },
   red:    { name: 'SUPER FAST', color: '#ee3333', speed: 1.65, curve: 0,   drop: 0.08 },
-  yellow: { name: 'Slider',     color: '#ffcc00', speed: 1.05, curve: 1.8, drop: 0.25 }
+  yellow: { name: 'Slider',     color: '#ffcc00', speed: 0.95, curve: 1.1, drop: 0.18 }
 };
 
 const FENCE = { left: 390, center: 430, right: 400 };
@@ -364,7 +364,7 @@ function startPitch() {
   const p = PITCHES[currentType];
   const hitter = getHitter();
   // Vision affects pitch speed and movement (higher vis = slower, less movement)
-  const visMod = 1 - (hitter.vis - 70) / 280;
+  const visMod = 1 - (hitter.vis - 70) / 180;
   anim.arm = 0;
   anim.swing = 0;
   anim.ball = {
@@ -431,7 +431,7 @@ function resolve(swung) {
   const inZone = ball && Math.abs(ball.x - canvas.width/2) < 30 && ballY > 295 && ballY < 350;
   const baseTiming = Math.max(0, 1 - timingError / 42);
   // Contact helps make contact on worse swings
-  const contactBonus = (hitter.con - 70) / 220;
+  const contactBonus = (hitter.con - 70) / 140;
   const timingQuality = Math.min(1, baseTiming + contactBonus);
 
   let madeContact = false;
