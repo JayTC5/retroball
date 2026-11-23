@@ -197,7 +197,7 @@ const PITCHES = {
   yellow: { name: 'Slider',     color: '#ffcc00', speed: 1.05, curve: 1.8, drop: 0.25 }
 };
 
-const FENCE = { left: 370, center: 410, right: 380 };
+const FENCE = { left: 390, center: 430, right: 400 };
 
 function getHitter() {
   if (currentHitterId) {
@@ -286,9 +286,9 @@ function draw() {
   ctx.fillStyle = '#fff';
   ctx.font = 'bold 11px Courier New';
   ctx.textAlign = 'center';
-  ctx.fillText('370', w/2 - 150, 62);
-  ctx.fillText('410', w/2, 48);
-  ctx.fillText('380', w/2 + 150, 62);
+  ctx.fillText('390', w/2 - 150, 62);
+  ctx.fillText('430', w/2, 48);
+  ctx.fillText('400', w/2 + 150, 62);
 
   ctx.fillStyle = '#8b6914';
   ctx.beginPath();
@@ -364,13 +364,13 @@ function startPitch() {
   const p = PITCHES[currentType];
   const hitter = getHitter();
   // Vision affects pitch speed and movement (higher vis = slower, less movement)
-  const visMod = 1 - (hitter.vis - 70) / 200;
+  const visMod = 1 - (hitter.vis - 70) / 280;
   anim.arm = 0;
   anim.swing = 0;
   anim.ball = {
     x: canvas.width / 2,
     y: canvas.height / 2 + 22,
-    speed: 2.8 * p.speed * visMod,
+    speed: 3.2 * p.speed * visMod,
     curve: p.curve * visMod,
     drop: p.drop,
     t: 0,
@@ -428,10 +428,10 @@ function resolve(swung) {
     doSwing();
   }
 
-  const inZone = ball && Math.abs(ball.x - canvas.width/2) < 42 && ballY > 270 && ballY < 370;
-  const baseTiming = Math.max(0, 1 - timingError / 60);
+  const inZone = ball && Math.abs(ball.x - canvas.width/2) < 30 && ballY > 295 && ballY < 350;
+  const baseTiming = Math.max(0, 1 - timingError / 42);
   // Contact helps make contact on worse swings
-  const contactBonus = (hitter.con - 70) / 150;
+  const contactBonus = (hitter.con - 70) / 220;
   const timingQuality = Math.min(1, baseTiming + contactBonus);
 
   let madeContact = false;
@@ -440,7 +440,7 @@ function resolve(swung) {
     // Complete miss (didn't swing)
     outs++;
     logMsg('Out! (no swing)');
-  } else if (inZone && timingQuality > 0.25) {
+  } else if (inZone && timingQuality > 0.42) {
     madeContact = true;
     const exitVelo = 88 + timingQuality * 42 + (hitter.pow - 70) * 0.4;
     const pull = (ball.x - canvas.width/2) / 40;
@@ -455,7 +455,7 @@ function resolve(swung) {
 
     // Power increases HR chance
     const powerBonus = (hitter.pow - 70) / 120;
-    const isHR = timingQuality > 0.58 || clampedDist >= fenceDist || (timingQuality > 0.4 && Math.random() < powerBonus);
+    const isHR = timingQuality > 0.72 || clampedDist >= fenceDist;
 
     if (isHR) {
       hrs++;
