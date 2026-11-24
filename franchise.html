@@ -124,9 +124,10 @@ canvas#gameCanvas { width: 100%; height: auto; display: block; }
           <div class="panel-title">Game</div>
           <div id="batterInfo" style="padding:8px;font-size:12px;">Ready</div>
           <div class="pitch-btns" id="pitchBtns" style="display:none;">
-            <button onclick="throwPitch('white')">FASTBALL</button>
-            <button onclick="throwPitch('red')">HEAT</button>
-            <button onclick="throwPitch('yellow')">SLIDER</button>
+            <button onclick="setPitchType('white')">FASTBALL</button>
+            <button onclick="setPitchType('red')">HEAT</button>
+            <button onclick="setPitchType('yellow')">SLIDER</button>
+            <div style="font-size:10px;padding:4px;color:#333;">Then click the field to place the pitch</div>
           </div>
           <div id="gameLog">Full baseball. You bat in the bottom, pitch in the top.</div>
         </div>
@@ -215,6 +216,8 @@ const FIELDERS = [
 let state = { coins: 2000, roster: [], lineup: Array(9).fill(null), season: { wins: 0, losses: 0, schedule: [] } };
 let gameState = null;
 let anim = { arm: 0, swing: 0, ball: null, hit: null, phase: 'idle', fielders: [] };
+let selectedPitchType = 'white';
+let pitchTarget = null;
 let canvas, ctx, selectedId = null, animId = null;
 
 function load() {
@@ -304,7 +307,7 @@ function initGame() {
   canvas = document.getElementById('gameCanvas');
   ctx = canvas.getContext('2d');
   canvas.onclick = onFieldTap;
-  document.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); onFieldTap(); } });
+  document.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); if (isBatting() && anim.phase === 'pitching') resolveBat(true); } });
   if (!gameState) newGame();
   else draw();
 }
@@ -334,7 +337,7 @@ function updateUI() {
   document.getElementById('count').textContent = gameState.balls + '-' + gameState.strikes;
   const batting = isBatting();
   document.getElementById('pitchBtns').style.display = batting ? 'none' : 'flex';
-  document.getElementById('tapHint').textContent = batting ? 'TAP / SPACE TO SWING' : 'CHOOSE A PITCH';
+  document.getElementById('tapHint').textContent = batting ? 'TAP / SPACE TO SWING' : 'SELECT PITCH, THEN CLICK FIELD';
   const b = batting ? getBatter() : null;
   document.getElementById('batterInfo').innerHTML = batting
     ? (b ? `<b>${b.name}</b> (${ovr(b)})<br>CON ${b.con} · VIS ${b.vis} · POW ${b.pow}` : 'No lineup')
@@ -342,14 +345,22 @@ function updateUI() {
 }
 function log(msg) { const el = document.getElementById('gameLog'); el.innerHTML += '<div>' + msg + '</div>'; el.scrollTop = el.scrollHeight; }
 
-function onFieldTap() {
+function setPitchType(type) {
+  selectedPitchType = type;
+  toast('Selected ' + PITCHES[type].name + '. Click the field to place it.');
+}
+function onFieldTap(e) {
   if (!gameState) return;
   if (isBatting() && anim.phase === 'pitching') resolveBat(true);
-  else if (isBatting() && anim.phase === 'idle') { /* waiting for auto pitch */ }
-}
-function throwPitch(type) {
-  if (!gameState || isBatting() || anim.phase !== 'idle') return;
-  startPitch(type, false);
+  else if (!isBatting() && anim.phase === 'idle') {
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+    if (y > 250 && y < 400 && Math.abs(x - 320) < 120) {
+      pitchTarget = { x, y };
+      startPitch(selectedPitchType, false);
+    }
+  }
 }
 function startPitch(type, isBattingPitch) {
   if (anim.phase !== 'idle') return;
@@ -359,7 +370,7 @@ function startPitch(type, isBattingPitch) {
   const visMod = isBatting() ? (1 - (batter.vis - 70) / 180) : 1;
   anim.arm = 0;
   anim.swing = 0;
-  anim.ball = { x: 320, y: 240, speed: 3.1 * p.speed * visMod, curve: p.curve * visMod, t: 0, type };
+  anim.ball = { x: 320, y: 240, speed: 3.1 * p.speed * visMod, curve: p.curve * visMod, t: 0, type, targetX: pitchTarget ? pitchTarget.x : 320 };
   anim.hit = null;
   updateUI();
   animatePitch(isBattingPitch);
@@ -371,6 +382,7 @@ function animatePitch(isBattingPitch) {
     anim.ball.t++;
     anim.ball.y += anim.ball.speed;
     anim.ball.speed += 0.1;
+    if (anim.ball.targetX) anim.ball.x += (anim.ball.targetX - anim.ball.x) * 0.04;
     if (anim.ball.curve) anim.ball.x += Math.sin(anim.ball.t * 0.13) * anim.ball.curve * 1.5;
   }
   draw();
@@ -408,7 +420,9 @@ function resolveBat(swung) {
     else log('Strike!');
   } else {
     const dist = Math.round(310 + timingQuality * 150 + (batter.pow - 70) * 1.5);
-    const isHR = timingQuality > 0.7 || dist >= 400;
+    const isHR = timingQuality > 0.75 || dist >= 420;
+    const isTriple = !isHR && (timingQuality > 0.62 || dist >= 380);
+    const isDouble = !isHR && !isTriple && (timingQuality > 0.48 || dist >= 340);
     if (isHR) {
       gameState.hrs++;
       const scored = 1 + gameState.bases.filter(Boolean).length;
@@ -417,10 +431,18 @@ function resolveBat(swung) {
       state.coins += Math.floor(dist / 12) + 10;
       log('HOME RUN! ' + dist + ' ft (' + scored + ' run' + (scored>1?'s':'') + ')');
       anim.hit = { x: 320, y: 370, vx: (Math.random()-0.5)*3, vy: -11, overFence: true };
+    } else if (isTriple) {
+      log('Triple! (' + dist + ' ft)');
+      advanceRunners(3);
+      anim.hit = { x: 320, y: 370, vx: (Math.random()-0.5)*4, vy: -7, overFence: false };
+    } else if (isDouble) {
+      log('Double! (' + dist + ' ft)');
+      advanceRunners(2);
+      anim.hit = { x: 320, y: 370, vx: (Math.random()-0.5)*5, vy: -6, overFence: false };
     } else {
-      log('Hit! (' + dist + ' ft)');
+      log('Single! (' + dist + ' ft)');
       advanceRunners(1);
-      anim.hit = { x: 320, y: 370, vx: (Math.random()-0.5)*4, vy: -5, overFence: false };
+      anim.hit = { x: 320, y: 370, vx: (Math.random()-0.5)*4, vy: -4, overFence: false };
     }
     gameState.strikes = 0; gameState.balls = 0;
     gameState.batterIndex++;
@@ -467,8 +489,12 @@ function resolvePitch() {
 }
 function autoPitch() {
   if (!gameState || !isBatting() || anim.phase !== 'idle') return;
-  const types = ['white','red','yellow'];
-  startPitch(types[Math.floor(Math.random()*3)], true);
+  log('Batter loading...');
+  setTimeout(() => {
+    if (!gameState || !isBatting() || anim.phase !== 'idle') return;
+    const types = ['white','red','yellow'];
+    startPitch(types[Math.floor(Math.random()*3)], true);
+  }, 1400);
 }
 function advanceRunners(bases) {
   for (let i = 0; i < bases; i++) {
@@ -502,7 +528,7 @@ function switchHalf() {
   } else {
     gameState.half = 'top';
     gameState.inning++;
-    if (gameState.inning > 9) { endGame(); return; }
+    if (gameState.inning > 3) { endGame(); return; }
     log('Top of the ' + gameState.inning + '. You pitch.');
   }
 }
