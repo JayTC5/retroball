@@ -26,7 +26,7 @@ main { padding: 12px; }
 .stat-box b { display: block; font-size: 20px; color: #1a6b42; }
 .play-big { display: block; width: 100%; margin: 12px auto; padding: 18px; background: #f4c430; color: #0a1f16; font-size: 20px; font-weight: bold; border: 4px solid #0a1f16; cursor: pointer; }
 .roster-grid, .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; padding: 10px; }
-.player-card { border: 3px solid #0a1f16; padding: 6px; text-align: center; background: #f5edd8; font-size: 12px; }
+.player-card { border: 3px solid #0a1f16; padding: 6px; text-align: center; background: #f5edd8; font-size: 12px; cursor: pointer; }
 .player-card.special { background: #fff3e0; border-color: #f4c430; }
 .rating { width: 34px; height: 34px; border-radius: 50%; background: #f4c430; border: 2px solid #0a1f16; margin: 4px auto; display: grid; place-items: center; font-weight: bold; }
 .lineup-slots { display: grid; gap: 6px; padding: 8px; }
@@ -34,16 +34,17 @@ main { padding: 12px; }
 .line-slot.starter { background: #e8f5e9; }
 .quick-actions { padding: 8px; display: flex; gap: 8px; }
 .quick-actions button { padding: 8px 12px; background: #1a6b42; color: white; border: 2px solid #000; font-weight: bold; cursor: pointer; }
-.game-layout { display: grid; grid-template-columns: 1fr 280px; gap: 12px; }
+.game-layout { display: grid; grid-template-columns: 1fr 260px; gap: 12px; }
 @media (max-width: 800px) { .game-layout { grid-template-columns: 1fr; } }
 .field-wrap { position: relative; background: #2d5a3a; border: 4px solid #0a1f16; cursor: pointer; }
 canvas#gameCanvas { width: 100%; height: auto; display: block; }
-.scoreboard { display: grid; grid-template-columns: repeat(5, 1fr); background: #0a1f16; color: white; text-align: center; font-size: 12px; }
+.scoreboard { display: grid; grid-template-columns: repeat(6, 1fr); background: #0a1f16; color: white; text-align: center; font-size: 11px; }
 .scoreboard div { padding: 6px 2px; }
-.scoreboard b { display: block; font-size: 16px; }
-.tap-hint { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 8px 14px; font-size: 14px; border: 2px solid #f4c430; pointer-events: none; font-weight: bold; }
-.next-pitch { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 4px 12px; font-size: 13px; font-weight: bold; border: 2px solid #fff; pointer-events: none; }
-#gameLog { height: 120px; overflow-y: auto; border: 3px solid #0a1f16; background: #fffdf5; padding: 6px; font-size: 12px; margin-top: 6px; }
+.scoreboard b { display: block; font-size: 15px; }
+.tap-hint { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: white; padding: 6px 12px; font-size: 13px; border: 2px solid #f4c430; pointer-events: none; font-weight: bold; text-align: center; }
+#gameLog { height: 140px; overflow-y: auto; border: 3px solid #0a1f16; background: #fffdf5; padding: 6px; font-size: 12px; margin-top: 6px; }
+.pitch-btns { display: flex; gap: 4px; padding: 6px; }
+.pitch-btns button { flex: 1; padding: 6px; font-size: 11px; background: #2a5aa0; color: white; border: 2px solid #000; cursor: pointer; }
 .toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%) translateY(120px); background: #0a1f16; color: white; border: 3px solid #f4c430; padding: 10px 18px; z-index: 200; transition: transform 0.2s; }
 .toast.show { transform: translateX(-50%) translateY(0); }
 </style>
@@ -93,7 +94,7 @@ canvas#gameCanvas { width: 100%; height: auto; display: block; }
     </section>
     <section id="shop" class="view">
       <div class="panel">
-        <div class="panel-title">Shop — Specials at top</div>
+        <div class="panel-title">Shop</div>
         <div class="shop-grid" id="shopGrid"></div>
       </div>
     </section>
@@ -108,21 +109,26 @@ canvas#gameCanvas { width: 100%; height: auto; display: block; }
         <div>
           <div class="scoreboard">
             <div>INN<br><b id="inning">1</b></div>
+            <div>HALF<br><b id="half">TOP</b></div>
             <div>OUT<br><b id="outs">0</b></div>
             <div>YOU<br><b id="runs">0</b></div>
             <div>OPP<br><b id="oppRuns">0</b></div>
-            <div>HR<br><b id="gameHrs">0</b></div>
+            <div>B-S<br><b id="count">0-0</b></div>
           </div>
           <div class="field-wrap">
             <canvas id="gameCanvas" width="640" height="440"></canvas>
-            <div class="next-pitch" id="nextPitch">NEXT: WHITE</div>
-            <div class="tap-hint" id="tapHint">TAP / SPACE TO PITCH</div>
+            <div class="tap-hint" id="tapHint">TAP TO BAT</div>
           </div>
         </div>
         <div class="panel">
-          <div class="panel-title">At Bat</div>
-          <div id="batterInfo" style="padding:8px;font-size:13px;">Ready</div>
-          <div id="gameLog">Tap field or press SPACE to pitch, then again to swing. Only misses are outs.</div>
+          <div class="panel-title">Game</div>
+          <div id="batterInfo" style="padding:8px;font-size:12px;">Ready</div>
+          <div class="pitch-btns" id="pitchBtns" style="display:none;">
+            <button onclick="throwPitch('white')">FASTBALL</button>
+            <button onclick="throwPitch('red')">HEAT</button>
+            <button onclick="throwPitch('yellow')">SLIDER</button>
+          </div>
+          <div id="gameLog">Full baseball. You bat in the bottom, pitch in the top.</div>
         </div>
       </div>
     </section>
@@ -179,7 +185,6 @@ const PLAYERS = [
   { id: 'lucasg', name: 'Lucas Grant', pos: 'C', cost: 420, special: false, con: 74, vis: 71, pow: 70 },
   { id: 'aidenm', name: 'Aiden Murphy', pos: 'OF', cost: 550, special: false, con: 75, vis: 73, pow: 71 },
   { id: 'noahb', name: 'Noah Bennett', pos: '1B', cost: 700, special: false, con: 73, vis: 69, pow: 80 },
-  { id: 'calebf2', name: 'Caleb Foster', pos: '2B', cost: 360, special: false, con: 71, vis: 74, pow: 66 },
   { id: 'wyatt', name: 'Wyatt Turner', pos: 'OF', cost: 500, special: false, con: 74, vis: 72, pow: 70 },
   { id: 'masonb', name: 'Mason Brooks', pos: '3B', cost: 450, special: false, con: 73, vis: 71, pow: 72 },
   { id: 'owenm', name: 'Owen Mitchell', pos: 'SS', cost: 520, special: false, con: 76, vis: 77, pow: 69 },
@@ -190,23 +195,32 @@ const PLAYERS = [
 ];
 
 const PITCHES = {
-  white:  { name: 'Fastball',   color: '#eeeeee', speed: 1.0,  curve: 0,   drop: 0.15 },
-  red:    { name: 'SUPER FAST', color: '#ee3333', speed: 1.65, curve: 0,   drop: 0.08 },
-  yellow: { name: 'Slider',     color: '#ffcc00', speed: 0.95, curve: 1.1, drop: 0.18 }
+  white:  { name: 'Fastball', color: '#eee', speed: 1.0, curve: 0 },
+  red:    { name: 'Heat',     color: '#e33', speed: 1.5, curve: 0 },
+  yellow: { name: 'Slider',   color: '#fc0', speed: 0.9, curve: 1.2 }
 };
-const FENCE = { left: 390, center: 430, right: 400 };
+const FENCE = { left: 370, center: 410, right: 380 };
+const FIELDERS = [
+  { x: 320, y: 250, label: 'P' },
+  { x: 320, y: 370, label: 'C' },
+  { x: 420, y: 310, label: '1B' },
+  { x: 250, y: 300, label: '2B' },
+  { x: 200, y: 340, label: '3B' },
+  { x: 280, y: 260, label: 'SS' },
+  { x: 180, y: 180, label: 'LF' },
+  { x: 320, y: 140, label: 'CF' },
+  { x: 460, y: 180, label: 'RF' }
+];
 
 let state = { coins: 2000, roster: [], lineup: Array(9).fill(null), season: { wins: 0, losses: 0, schedule: [] } };
 let gameState = null;
-let anim = { arm: 0, swing: 0, ball: null, hit: null, phase: 'idle' };
-let nextPitchType = 'white';
+let anim = { arm: 0, swing: 0, ball: null, hit: null, phase: 'idle', fielders: [] };
 let canvas, ctx, selectedId = null, animId = null;
 
 function load() {
   try { const s = localStorage.getItem('retroball-franchise'); if (s) Object.assign(state, JSON.parse(s)); } catch(e) {}
   if (!state.roster.length) {
-    const startIds = ['jaxon','brooks','xavier','victor','joe','dwain','seanham','trevor','lukewolf'];
-    startIds.forEach(id => {
+    ['jaxon','brooks','xavier','victor','joe','dwain','seanham','trevor','lukewolf'].forEach(id => {
       const p = PLAYERS.find(x => x.id === id);
       if (p) state.roster.push({ ...p, uid: Math.random() });
     });
@@ -216,7 +230,7 @@ function load() {
   save();
 }
 function save() { localStorage.setItem('retroball-franchise', JSON.stringify(state)); }
-function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 1800); }
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 1600); }
 function ovr(p) { return Math.round((p.con + p.vis + p.pow) / 3); }
 function autoFillBest() {
   const sorted = [...state.roster].sort((a,b) => ovr(b) - ovr(a));
@@ -259,7 +273,7 @@ function renderAll() {
     </div>`).join('');
   document.getElementById('lineupSlots').innerHTML = state.lineup.map((uid, slot) => {
     const p = uid ? state.roster.find(r => r.uid === uid) : null;
-    return `<div class="line-slot ${p?'starter':''}" onclick="assignSlot(${slot})"><b>BAT ${slot+1}</b><span>${p ? p.name + ' (' + ovr(p) + ')' : 'Empty'}</span></div>`;
+    return `<div class="line-slot ${p?'starter':''}" onclick="assignSlot(${slot})"><b>${slot+1}</b><span>${p ? p.name + ' (' + ovr(p) + ')' : 'Empty'}</span></div>`;
   }).join('');
   const sortedShop = [...PLAYERS].sort((a,b) => (b.special?1:0) - (a.special?1:0) || a.cost - b.cost);
   document.getElementById('shopGrid').innerHTML = sortedShop.map(p => {
@@ -269,8 +283,8 @@ function renderAll() {
         <div style="font-weight:bold;">${p.name} ${p.special?'★':''}</div>
         <div class="rating">${ovr(p)}</div>
         <div style="font-size:10px;">${p.pos}<br>CON ${p.con} · VIS ${p.vis} · POW ${p.pow}</div>
-        <div style="margin-top:4px;">$${p.cost >= 1000 ? (p.cost/1000)+'k' : p.cost}</div>
-        ${owned ? '<div style="color:#1a6b42;font-weight:bold;">OWNED</div>' : `<button onclick="buyPlayer('${p.id}')" style="margin-top:4px;padding:4px;background:#1a6b42;color:white;width:100%;border:none;cursor:pointer;">BUY</button>`}
+        <div>$${p.cost >= 1000 ? (p.cost/1000)+'k' : p.cost}</div>
+        ${owned ? '<div style="color:#1a6b42;">OWNED</div>' : `<button onclick="buyPlayer('${p.id}')" style="margin-top:4px;padding:4px;background:#1a6b42;color:white;width:100%;border:none;cursor:pointer;">BUY</button>`}
       </div>`;
   }).join('');
   document.getElementById('scheduleList').innerHTML = (state.season.schedule||[]).map((g,i) => `Game ${i+1}: vs ${g.opp} — ${g.played ? g.result : 'Upcoming'}`).join('<br>');
@@ -286,35 +300,26 @@ document.querySelectorAll('nav button').forEach(btn => {
   };
 });
 
-function pickPitch() {
-  const r = Math.random();
-  if (r < 0.45) return 'white';
-  if (r < 0.75) return 'red';
-  return 'yellow';
-}
-function updateNextPitchDisplay() {
-  const p = PITCHES[nextPitchType];
-  const el = document.getElementById('nextPitch');
-  if (el) { el.textContent = 'NEXT: ' + nextPitchType.toUpperCase() + ' (' + p.name + ')'; el.style.borderColor = p.color; }
-}
-
 function initGame() {
   canvas = document.getElementById('gameCanvas');
   ctx = canvas.getContext('2d');
-  canvas.onclick = onTap;
-  document.addEventListener('keydown', (e) => { if (e.code === 'Space') { e.preventDefault(); onTap(); } });
+  canvas.onclick = onFieldTap;
+  document.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); onFieldTap(); } });
   if (!gameState) newGame();
   else draw();
 }
 function newGame() {
-  gameState = { inning: 1, outs: 0, runs: 0, oppRuns: 0, bases: [false,false,false], batterIndex: 0, hrs: 0 };
+  gameState = {
+    inning: 1, half: 'top', outs: 0, runs: 0, oppRuns: 0,
+    bases: [false, false, false], batterIndex: 0, oppBatterIndex: 0,
+    balls: 0, strikes: 0, hrs: 0
+  };
   anim = { arm: 0, swing: 0, ball: null, hit: null, phase: 'idle' };
-  nextPitchType = pickPitch();
-  updateNextPitchDisplay();
-  log('New game! Tap or SPACE to pitch.');
+  log('Play ball! You pitch in the top of the inning.');
   updateUI();
   draw();
 }
+function isBatting() { return gameState && gameState.half === 'bottom'; }
 function getBatter() {
   const starters = state.lineup.filter(u => u).map(u => state.roster.find(r => r.uid === u)).filter(Boolean);
   return starters.length ? starters[gameState.batterIndex % starters.length] : null;
@@ -322,149 +327,199 @@ function getBatter() {
 function updateUI() {
   if (!gameState) return;
   document.getElementById('inning').textContent = gameState.inning;
+  document.getElementById('half').textContent = gameState.half.toUpperCase();
   document.getElementById('outs').textContent = gameState.outs;
   document.getElementById('runs').textContent = gameState.runs;
   document.getElementById('oppRuns').textContent = gameState.oppRuns;
-  document.getElementById('gameHrs').textContent = gameState.hrs;
-  const b = getBatter();
-  document.getElementById('batterInfo').innerHTML = b ? `<b>${b.name}</b> (${ovr(b)})<br>CON ${b.con} · VIS ${b.vis} · POW ${b.pow}` : 'No lineup';
-  document.getElementById('tapHint').textContent = anim.phase === 'pitching' ? 'TAP / SPACE TO SWING' : 'TAP / SPACE TO PITCH';
+  document.getElementById('count').textContent = gameState.balls + '-' + gameState.strikes;
+  const batting = isBatting();
+  document.getElementById('pitchBtns').style.display = batting ? 'none' : 'flex';
+  document.getElementById('tapHint').textContent = batting ? 'TAP / SPACE TO SWING' : 'CHOOSE A PITCH';
+  const b = batting ? getBatter() : null;
+  document.getElementById('batterInfo').innerHTML = batting
+    ? (b ? `<b>${b.name}</b> (${ovr(b)})<br>CON ${b.con} · VIS ${b.vis} · POW ${b.pow}` : 'No lineup')
+    : 'You are pitching. Choose a pitch.';
 }
 function log(msg) { const el = document.getElementById('gameLog'); el.innerHTML += '<div>' + msg + '</div>'; el.scrollTop = el.scrollHeight; }
 
-function onTap() {
-  if (!gameState || !getBatter()) return toast('Set a lineup first');
-  if (anim.phase === 'idle') startPitch();
-  else if (anim.phase === 'pitching') resolve(true);
+function onFieldTap() {
+  if (!gameState) return;
+  if (isBatting() && anim.phase === 'pitching') resolveBat(true);
+  else if (isBatting() && anim.phase === 'idle') { /* waiting for auto pitch */ }
 }
-
-function startPitch() {
+function throwPitch(type) {
+  if (!gameState || isBatting() || anim.phase !== 'idle') return;
+  startPitch(type, false);
+}
+function startPitch(type, isBattingPitch) {
   if (anim.phase !== 'idle') return;
   anim.phase = 'pitching';
-  const batter = getBatter();
-  const p = PITCHES[nextPitchType];
-  const visMod = 1 - (batter.vis - 70) / 180;
+  const p = PITCHES[type];
+  const batter = isBatting() ? getBatter() : { vis: 70, con: 70, pow: 70 };
+  const visMod = isBatting() ? (1 - (batter.vis - 70) / 180) : 1;
   anim.arm = 0;
   anim.swing = 0;
-  anim.ball = { x: 320, y: 240, speed: 3.0 * p.speed * visMod, curve: p.curve * visMod, drop: p.drop, t: 0, type: nextPitchType };
+  anim.ball = { x: 320, y: 240, speed: 3.1 * p.speed * visMod, curve: p.curve * visMod, t: 0, type };
   anim.hit = null;
   updateUI();
-  log('Pitch!');
-  animate();
+  animatePitch(isBattingPitch);
 }
-
-function animate() {
+function animatePitch(isBattingPitch) {
   if (anim.phase !== 'pitching') return;
-  anim.arm = Math.min(1, anim.arm + 0.06);
+  anim.arm = Math.min(1, anim.arm + 0.07);
   if (anim.ball) {
-    const b = anim.ball;
-    b.t += 1;
-    b.y += b.speed;
-    b.speed += b.drop * 0.12;
-    if (b.curve) b.x += Math.sin(b.t * 0.12) * b.curve * 1.4;
+    anim.ball.t++;
+    anim.ball.y += anim.ball.speed;
+    anim.ball.speed += 0.1;
+    if (anim.ball.curve) anim.ball.x += Math.sin(anim.ball.t * 0.13) * anim.ball.curve * 1.5;
   }
   draw();
-  if (anim.ball && anim.ball.y < 360) animId = requestAnimationFrame(animate);
-  else if (anim.phase === 'pitching') setTimeout(() => { if (anim.phase === 'pitching') resolve(false); }, 80);
+  if (anim.ball && anim.ball.y < 360) {
+    animId = requestAnimationFrame(() => animatePitch(isBattingPitch));
+  } else if (anim.phase === 'pitching') {
+    setTimeout(() => {
+      if (isBattingPitch) resolveBat(false);
+      else resolvePitch();
+    }, 60);
+  }
 }
-
-function resolve(swung) {
+function resolveBat(swung) {
   if (anim.phase !== 'pitching') return;
   anim.phase = 'resolving';
   if (animId) cancelAnimationFrame(animId);
   const batter = getBatter();
   const ball = anim.ball;
   const ballY = ball ? ball.y : 0;
-  const timingError = Math.abs(ballY - 325);
-  const contactBonus = (batter.con - 70) / 140;
-  const timingQuality = Math.min(1, Math.max(0, 1 - timingError / 50) + contactBonus);
+  const timingError = Math.abs(ballY - 330);
+  const contactBonus = batter ? (batter.con - 70) / 140 : 0;
+  const timingQuality = Math.min(1, Math.max(0, 1 - timingError / 55) + contactBonus);
+  const inZone = ball && Math.abs(ball.x - 320) < 40 && ballY > 275 && ballY < 365;
 
   if (swung) {
     anim.swing = 0;
     let s = 0;
-    const doSwing = () => { s++; anim.swing = Math.min(1, s*0.16); draw(); if (s < 8) requestAnimationFrame(doSwing); };
+    const doSwing = () => { s++; anim.swing = Math.min(1, s*0.15); draw(); if (s < 7) requestAnimationFrame(doSwing); };
     doSwing();
   }
 
-  const inZone = ball && Math.abs(ball.x - 320) < 38 && ballY > 280 && ballY < 360;
-  const madeContact = swung && inZone && timingQuality > 0.32;
-
-  if (!madeContact) {
-    gameState.outs++;
-    log('Out!');
+  if (!swung || !inZone || timingQuality < 0.3) {
+    gameState.strikes++;
+    if (gameState.strikes >= 3) { log('Strikeout!'); addOut(); gameState.strikes = 0; gameState.balls = 0; }
+    else log('Strike!');
   } else {
-    const exitVelo = 90 + timingQuality * 40 + (batter.pow - 70) * 0.5;
-    const pull = (ball.x - 320) / 40;
-    const dist = Math.round(exitVelo * 2.7 + (batter.pow - 70) * 1.4 + (Math.random()-0.5)*15);
-    const clampedDist = Math.max(280, Math.min(500, dist));
-    let fenceDist = FENCE.center;
-    if (pull < -0.35) fenceDist = FENCE.left;
-    else if (pull > 0.35) fenceDist = FENCE.right;
-    const isHR = timingQuality > 0.68 || clampedDist >= fenceDist;
+    const dist = Math.round(310 + timingQuality * 150 + (batter.pow - 70) * 1.5);
+    const isHR = timingQuality > 0.7 || dist >= 400;
     if (isHR) {
       gameState.hrs++;
-      gameState.runs++;
-      const coins = Math.floor(clampedDist / 10) + 15;
-      state.coins += coins;
-      log('HOME RUN! ' + clampedDist + ' ft (+' + coins + ' coins)');
-      anim.hit = { x: 320 + pull*15, y: 370, vx: pull*1.8, vy: -12 - timingQuality*4, overFence: true };
+      const scored = 1 + gameState.bases.filter(Boolean).length;
+      gameState.runs += scored;
+      gameState.bases = [false,false,false];
+      state.coins += Math.floor(dist / 12) + 10;
+      log('HOME RUN! ' + dist + ' ft (' + scored + ' run' + (scored>1?'s':'') + ')');
+      anim.hit = { x: 320, y: 370, vx: (Math.random()-0.5)*3, vy: -11, overFence: true };
     } else {
-      log('Contact (' + clampedDist + ' ft)');
-      // advance runners simply
-      if (gameState.bases[2]) { gameState.runs++; log('Run scores!'); }
-      gameState.bases[2] = gameState.bases[1];
-      gameState.bases[1] = gameState.bases[0];
-      gameState.bases[0] = true;
-      anim.hit = { x: 320 + pull*15, y: 370, vx: pull*2.5, vy: -5 - timingQuality*2, overFence: false };
+      log('Hit! (' + dist + ' ft)');
+      advanceRunners(1);
+      anim.hit = { x: 320, y: 370, vx: (Math.random()-0.5)*4, vy: -5, overFence: false };
     }
+    gameState.strikes = 0; gameState.balls = 0;
+    gameState.batterIndex++;
     let f = 0;
     const fly = () => {
       if (!anim.hit) return;
-      anim.hit.x += anim.hit.vx;
-      anim.hit.y += anim.hit.vy;
-      anim.hit.vy += 0.18;
-      f++;
-      draw();
-      if (anim.hit.overFence && anim.hit.y > 35) anim.hit.vy = Math.min(anim.hit.vy, -2.5);
-      if (f < 95 && anim.hit.y > -30) requestAnimationFrame(fly);
-      else anim.hit = null;
+      anim.hit.x += anim.hit.vx; anim.hit.y += anim.hit.vy; anim.hit.vy += 0.2;
+      f++; draw();
+      if (f < 70 && anim.hit.y > -20) requestAnimationFrame(fly); else anim.hit = null;
     };
     fly();
   }
-
-  gameState.batterIndex++;
-
-  if (gameState.outs >= 3) {
-    gameState.outs = 0;
-    gameState.inning++;
-    gameState.bases = [false,false,false];
-    const ovrVal = parseInt(document.getElementById('teamOvr').textContent) || 60;
-    const scored = Math.random() < (0.32 - (ovrVal-60)*0.003) ? Math.floor(Math.random()*2)+1 : 0;
-    gameState.oppRuns += scored;
-    if (scored) log('Opponent scores ' + scored);
-    log('End of inning. ' + gameState.runs + '-' + gameState.oppRuns);
-    if (gameState.inning > 5) { setTimeout(endGame, 700); return; }
-  }
-
-  nextPitchType = pickPitch();
-  updateNextPitchDisplay();
   anim.ball = null;
+  checkHalf();
   updateUI();
-  setTimeout(() => { anim.phase = 'idle'; draw(); }, 500);
+  setTimeout(() => { anim.phase = 'idle'; draw(); if (isBatting()) setTimeout(autoPitch, 400); }, 400);
 }
-
+function resolvePitch() {
+  if (anim.phase !== 'pitching') return;
+  anim.phase = 'resolving';
+  if (animId) cancelAnimationFrame(animId);
+  const hitChance = 0.38 + Math.random() * 0.2;
+  if (Math.random() < hitChance) {
+    const isHR = Math.random() < 0.12;
+    if (isHR) {
+      const scored = 1 + gameState.bases.filter(Boolean).length;
+      gameState.oppRuns += scored;
+      gameState.bases = [false,false,false];
+      log('Opponent HOME RUN! (' + scored + ')');
+    } else {
+      log('Opponent hit.');
+      advanceRunnersOpp(1);
+    }
+  } else {
+    gameState.strikes++;
+    if (gameState.strikes >= 3) { log('Strikeout!'); addOut(); gameState.strikes = 0; }
+    else log('Strike.');
+  }
+  gameState.oppBatterIndex++;
+  anim.ball = null;
+  checkHalf();
+  updateUI();
+  setTimeout(() => { anim.phase = 'idle'; draw(); }, 400);
+}
+function autoPitch() {
+  if (!gameState || !isBatting() || anim.phase !== 'idle') return;
+  const types = ['white','red','yellow'];
+  startPitch(types[Math.floor(Math.random()*3)], true);
+}
+function advanceRunners(bases) {
+  for (let i = 0; i < bases; i++) {
+    if (gameState.bases[2]) { gameState.runs++; log('Run scores!'); }
+    gameState.bases[2] = gameState.bases[1];
+    gameState.bases[1] = gameState.bases[0];
+    gameState.bases[0] = true;
+  }
+}
+function advanceRunnersOpp(bases) {
+  for (let i = 0; i < bases; i++) {
+    if (gameState.bases[2]) { gameState.oppRuns++; log('Opp scores!'); }
+    gameState.bases[2] = gameState.bases[1];
+    gameState.bases[1] = gameState.bases[0];
+    gameState.bases[0] = true;
+  }
+}
+function addOut() {
+  gameState.outs++;
+  if (gameState.outs >= 3) switchHalf();
+}
+function switchHalf() {
+  gameState.outs = 0;
+  gameState.bases = [false,false,false];
+  gameState.balls = 0;
+  gameState.strikes = 0;
+  if (gameState.half === 'top') {
+    gameState.half = 'bottom';
+    log('Bottom of the ' + gameState.inning + '. You bat!');
+    setTimeout(autoPitch, 600);
+  } else {
+    gameState.half = 'top';
+    gameState.inning++;
+    if (gameState.inning > 9) { endGame(); return; }
+    log('Top of the ' + gameState.inning + '. You pitch.');
+  }
+}
+function checkHalf() {
+  if (gameState.outs >= 3) switchHalf();
+}
 function endGame() {
   const win = gameState.runs > gameState.oppRuns;
-  const reward = win ? 80 + gameState.runs * 8 : 20;
+  const reward = win ? 100 + gameState.runs * 5 : 25;
   state.coins += reward;
   const next = state.season.schedule.find(g => !g.played);
   if (next) { next.played = true; next.result = win ? 'W' : 'L'; if (win) state.season.wins++; else state.season.losses++; }
   log(win ? 'YOU WIN! +$' + reward : 'Lost. +$' + reward);
-  toast(win ? 'Victory!' : 'Try again');
+  toast(win ? 'Victory!' : 'Better luck');
   gameState = null;
   save(); renderAll();
 }
-
 function startNextGame() {
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   document.querySelector('[data-view="game"]').classList.add('active');
@@ -473,64 +528,65 @@ function startNextGame() {
   initGame(); newGame();
 }
 
-function drawPixel(x, y, color, arm, isPitcher) {
-  ctx.fillStyle = isPitcher ? color : '#c84a46';
-  ctx.fillRect(x - 7, y - 18, 14, 20);
+function drawPixel(x, y, color, arm, isP) {
+  ctx.fillStyle = isP ? color : '#c84a46';
+  ctx.fillRect(x-6, y-14, 12, 16);
   ctx.fillStyle = '#f4c28a';
-  ctx.fillRect(x - 6, y - 28, 12, 11);
-  ctx.fillStyle = isPitcher ? '#222' : '#a33';
-  ctx.fillRect(x - 7, y - 30, 14, 4);
-  ctx.strokeStyle = isPitcher ? '#222' : '#8b4513';
-  ctx.lineWidth = isPitcher ? 3 : 5;
-  ctx.beginPath();
-  ctx.moveTo(x + (isPitcher ? 7 : -7), y - 12);
-  const ang = isPitcher ? (arm * Math.PI * 1.2 - 1) : (-1.2 + arm * 2.6);
-  const len = isPitcher ? 16 : 20;
-  ctx.lineTo(x + Math.cos(ang) * len, y - 10 + Math.sin(ang) * 12);
-  ctx.stroke();
+  ctx.fillRect(x-5, y-22, 10, 9);
+  ctx.fillStyle = isP ? '#222' : '#a33';
+  ctx.fillRect(x-6, y-24, 12, 3);
+  if (arm !== undefined) {
+    ctx.strokeStyle = isP ? '#222' : '#8b4513';
+    ctx.lineWidth = isP ? 2 : 4;
+    ctx.beginPath();
+    ctx.moveTo(x + (isP?5:-5), y-8);
+    const ang = isP ? (arm * 1.2 - 0.8) : (-1.1 + arm * 2.4);
+    ctx.lineTo(x + Math.cos(ang)*12, y-6 + Math.sin(ang)*8);
+    ctx.stroke();
+  }
 }
-
 function draw() {
   if (!ctx) return;
   const w = 640, h = 440;
-  ctx.fillStyle = '#2d5a3a'; ctx.fillRect(0, 0, w, h);
-  ctx.fillStyle = '#266b40'; for (let y = 0; y < h; y += 14) ctx.fillRect(0, y, w, 7);
-
-  // Curvy fence
+  ctx.fillStyle = '#2d5a3a'; ctx.fillRect(0,0,w,h);
+  ctx.fillStyle = '#266b40'; for (let y=0;y<h;y+=14) ctx.fillRect(0,y,w,7);
+  // fence
   ctx.fillStyle = '#3a2a1a';
-  ctx.beginPath(); ctx.moveTo(20, 70); ctx.quadraticCurveTo(w/2, 28, w - 20, 70); ctx.lineTo(w - 20, 92); ctx.quadraticCurveTo(w/2, 50, 20, 92); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = '#5a3a22';
-  ctx.beginPath(); ctx.moveTo(20, 70); ctx.quadraticCurveTo(w/2, 28, w - 20, 70); ctx.lineTo(w - 20, 78); ctx.quadraticCurveTo(w/2, 36, 20, 78); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = '#222';
-  for (let i = 0; i <= 18; i++) {
-    const t = i / 18;
-    const x = 20 + t * (w - 40);
-    const y = 70 + (t - 0.5) * (t - 0.5) * 80 - 20;
-    ctx.fillRect(x - 1.5, y, 3, 24);
-  }
-  ctx.fillStyle = '#fff'; ctx.font = 'bold 11px Courier New'; ctx.textAlign = 'center';
-  ctx.fillText('390', w/2 - 150, 62); ctx.fillText('430', w/2, 48); ctx.fillText('400', w/2 + 150, 62);
-
+  ctx.beginPath(); ctx.moveTo(30, 65); ctx.quadraticCurveTo(w/2, 22, w-30, 65); ctx.lineTo(w-30, 85); ctx.quadraticCurveTo(w/2, 42, 30, 85); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.font = '10px Courier New'; ctx.textAlign = 'center';
+  ctx.fillText('370', 120, 55); ctx.fillText('410', w/2, 38); ctx.fillText('380', w-120, 55);
+  // dirt
   ctx.fillStyle = '#8b6914';
-  ctx.beginPath(); ctx.moveTo(w/2, h - 8); ctx.lineTo(w/2 - 155, h/2 + 55); ctx.lineTo(w/2, 95); ctx.lineTo(w/2 + 155, h/2 + 55); ctx.closePath(); ctx.fill();
-
+  ctx.beginPath(); ctx.moveTo(w/2, h-15); ctx.lineTo(w/2-140, h/2+40); ctx.lineTo(w/2, 100); ctx.lineTo(w/2+140, h/2+40); ctx.closePath(); ctx.fill();
+  // bases
   ctx.fillStyle = '#fff';
-  [[w/2, h-38], [w/2-125, h/2+35], [w/2, 125], [w/2+125, h/2+35]].forEach(([x,y]) => ctx.fillRect(x-8, y-8, 16, 16));
-
-  ctx.fillStyle = '#a67c52'; ctx.beginPath(); ctx.arc(w/2, h/2 + 35, 18, 0, Math.PI*2); ctx.fill();
-  ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.strokeRect(w/2-32, h-90, 64, 38);
-
-  const pColor = PITCHES[nextPitchType].color;
-  drawPixel(w/2, h/2 + 22, pColor, anim.arm, true);
-  drawPixel(w/2 + 26, h - 70, '#c84a46', anim.swing, false);
-
-  if (anim.ball) { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(anim.ball.x, anim.ball.y, 6, 0, Math.PI*2); ctx.fill(); ctx.strokeStyle = '#000'; ctx.stroke(); }
-  if (anim.hit) { ctx.fillStyle = '#ffee55'; ctx.beginPath(); ctx.arc(anim.hit.x, anim.hit.y, 5, 0, Math.PI*2); ctx.fill(); ctx.strokeStyle = '#000'; ctx.stroke(); }
-
-  ctx.fillStyle = '#1a3a28'; ctx.fillRect(0, 0, w, 36);
-  for (let i = 0; i < 90; i++) { ctx.fillStyle = ['#e44','#4ae','#fe4','#fff','#a4e'][i%5]; ctx.fillRect((i * 7) % w, 8 + (i % 4) * 6, 3, 3); }
+  [[w/2, h-50],[220, 280],[w/2, 130],[420, 280]].forEach(([x,y]) => ctx.fillRect(x-7,y-7,14,14));
+  // mound
+  ctx.fillStyle = '#a67c52'; ctx.beginPath(); ctx.arc(w/2, 250, 16, 0, Math.PI*2); ctx.fill();
+  // fielders
+  FIELDERS.forEach(f => {
+    ctx.fillStyle = '#3a6ea5';
+    ctx.fillRect(f.x-5, f.y-12, 10, 14);
+    ctx.fillStyle = '#f4c28a';
+    ctx.fillRect(f.x-4, f.y-18, 8, 7);
+    ctx.fillStyle = '#fff'; ctx.font = '9px Courier New'; ctx.fillText(f.label, f.x, f.y+8);
+  });
+  // runners
+  if (gameState) {
+    if (gameState.bases[0]) drawPixel(220, 280, '#fff', 0, false);
+    if (gameState.bases[1]) drawPixel(w/2, 130, '#fff', 0, false);
+    if (gameState.bases[2]) drawPixel(420, 280, '#fff', 0, false);
+  }
+  // pitcher & batter
+  const pColor = anim.ball ? PITCHES[anim.ball.type||'white'].color : '#3a6ea5';
+  drawPixel(w/2, 240, pColor, anim.arm, true);
+  drawPixel(w/2+22, h-70, '#c84a46', anim.swing, false);
+  if (anim.ball) { ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(anim.ball.x, anim.ball.y, 5, 0, Math.PI*2); ctx.fill(); }
+  if (anim.hit) { ctx.fillStyle='#ff0'; ctx.beginPath(); ctx.arc(anim.hit.x, anim.hit.y, 5, 0, Math.PI*2); ctx.fill(); }
+  // crowd
+  ctx.fillStyle = '#1a3a28'; ctx.fillRect(0,0,w,32);
+  for (let i=0;i<80;i++) { ctx.fillStyle=['#e44','#4ae','#fe4','#fff'][i%4]; ctx.fillRect((i*8)%w, 6+(i%3)*7, 2,2); }
 }
-
 load(); renderAll();
 </script>
 </body>
